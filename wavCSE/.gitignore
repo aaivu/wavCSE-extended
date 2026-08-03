@@ -1,0 +1,7 @@
+**/*.log
+**/*.out
+**/.ipynb_checkpoints/
+**/*.pth
+**/*.pyc
+**/*.pkl
+**/*.DS_Store
