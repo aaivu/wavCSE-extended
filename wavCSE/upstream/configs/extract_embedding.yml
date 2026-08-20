@@ -1,0 +1,88 @@
+# ============================================================
+# Upstream Embedding Extraction Configuration
+#
+# This configuration file defines all settings required for
+# extracting embeddings using an upstream SSL speech model.
+# It includes logging, device selection, dataset paths,
+# model configuration, pooling strategy, and dataset limits.
+#
+# This file is intended to be used by the main upstream
+# embedding extraction orchestration script.
+#
+# Author: Braveenan Sritharan
+# Created: 2026-01-19
+# ============================================================
+
+# ----------------------------
+# Logging
+# ----------------------------
+log_level: INFO        # Logging verbosity level
+                       # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+# ----------------------------
+# Device configuration
+# ----------------------------
+device:
+  type: cuda          # Device type to use
+                       # Options: cuda, cpu
+  index: 0             # GPU index (only used if type = cuda)
+                       # Ignored if device type is cpu
+
+# ----------------------------
+# Paths
+# ----------------------------
+paths:
+  root_data_path: ~/voice_dataset
+                       # Root directory containing raw audio datasets
+                       # Expected directory structure:
+                       #
+                       # ~/voice_dataset/
+                       # ├── dataset1/
+                       # ├── dataset2/
+                       # └── datasetN/
+
+  root_emb_path: ~/embedding2
+                       # Root directory where extracted embeddings will be saved
+
+  upstream_checkpoint_path: ~/pretrained_checkpoints/SSL/WavLM-Large.pt
+                       # Path to pretrained upstream model checkpoint
+                       # Example: WavLM, HuBERT, wav2vec2 checkpoints
+
+# ----------------------------
+# Upstream model
+# ----------------------------
+upstream:
+  model_type: wavlm_large
+                       # Type of upstream SSL model to use
+                       # Current options:
+                       # - wavlm_large
+                       # (Extendable later: wavlm_base, hubert, wav2vec2, etc.)
+
+# ----------------------------
+# Pooling
+# ----------------------------
+pooling:
+  # Layer pooling: pools across selected transformer layers (layer dimension)
+  frame_pooling_type: mix        # Options (your Pooling class):
+                                  # mean      : Mean Pooling
+                                  # max       : Max Pooling
+                                  # mix       : Mixed Pooling (mix of max + mean)
+                                  # lnp       : Learned Norm Pooling
+                                  # smp       : Softmax Pooling
+                                  # lse       : Log Sum Exp Pooling
+
+  frame_pooling_param: 0.5       # Parameter rules (what value to provide):
+                                  # mean, max        : null (no parameter needed)
+                                  # mix              : mix_ratio in [0.0, 1.0]
+                                  #                  0.0 -> pure mean, 1.0 -> pure max
+                                  # lnp              : p (integer norm order), typically 2, 3, 4
+                                  # smp              : lambda (float), controls sharpness (typical: 0.5 to 10.0)
+                                  # lse              : r (float), controls sharpness (typical: 0.5 to 10.0)
+
+# ----------------------------
+# Dataset control
+# ----------------------------
+dataset:
+  limit: 1          # Maximum number of samples to process
+                       # - Integer > 0 : process only first N samples
+                       # - null        : process entire dataset

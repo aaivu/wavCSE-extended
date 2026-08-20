@@ -1,0 +1,12 @@
+md5: 5fa358f1de56705db81cb3035b07d6be
+frozen: true
+deps:
+- md5: 6ab292524f1ecbcbaac9e64726ecf648
+  size: 137
+  hash: md5
+  path: /home/induwara/dataset/embedding.tar.gz
+outs:
+- md5: 6ab292524f1ecbcbaac9e64726ecf648
+  size: 137
+  hash: md5
+  path: embedding.tar.gz

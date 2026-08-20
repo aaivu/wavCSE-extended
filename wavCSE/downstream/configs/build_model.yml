@@ -1,0 +1,142 @@
+# =============================================================================
+# Downstream configuration for multi task training and evaluation
+#
+# This configuration controls:
+#  - Logging verbosity
+#  - Device selection (CPU or GPU)
+#  - Dataset and embedding paths
+#  - Upstream representation selection (SSL model type and chosen layers)
+#  - Pooling configuration (frame pooling and layer pooling)
+#  - Downstream model architecture hyperparameters
+#  - Training and evaluation settings
+#
+# Author: Braveenan Sritharan
+# Created: 2026-01-19
+# =============================================================================
+
+# ----------------------------
+# Logging
+# ----------------------------
+log_level: INFO  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+# ----------------------------
+# Device selection
+# ----------------------------
+device:
+  type: cuda   # Options: cuda, cpu
+  index: 1     # Used only if type is cuda. If GPU not available, your code should fallback to CPU.
+
+# ----------------------------
+# Paths
+# ----------------------------
+paths:
+  root_data_path: ~/voice_dataset   # Root folder containing dataset subfolders (speechcommand, voxceleb, etc.)
+  root_emb_path: ~/embedding        # Where extracted embeddings + CSV will be saved
+  results_root: results             # Where downstream trainer/evaluator writes logs, plots, metrics
+  checkpoints_root: checkpoints     # Where downstream trainer saves model checkpoints
+
+# ----------------------------
+# Upstream model (SSL model)
+# ----------------------------
+upstream:
+  model_type: wavlm_large           # (Extendable later: wavlm_base, hubert, wav2vec2, etc.)
+  selected_transformer_layers: 6,1,0,3,2,5,4,7,8,9,10,11,12,17,14,13  
+                                   # Options (depends on your parse_transformer_layers):
+                                   # - all
+                                   # - "0,1,2,3"
+                                   # - "1-6"
+                                   # Output is transformer_layer_array (list of selected layers)
+
+# ----------------------------
+# Dataset behavior
+# ----------------------------
+dataset:
+  subset_percentage: 10 # Percentage of dataset to use (1-100). Useful for quick experiments.
+  ignore_index: -1      # Label value treated as "invalid/masked" (excluded from loss + accuracy).
+                        # Make sure your datasets set missing labels to this value.
+
+# ----------------------------
+# Pooling
+# ----------------------------
+pooling:
+  # Frame pooling: pools time dimension inside each layer representation
+  frame_pooling_type: mean        # Options: mean, max, mix, lnp, smp, lse
+                                  # mean      : Mean Pooling
+                                  # max       : Max Pooling
+                                  # mix       : Mixed Pooling (mix of max + mean)
+                                  # lnp       : Learned Norm Pooling
+                                  # smp       : Softmax Pooling
+                                  # lse       : Log Sum Exp Pooling
+  
+  frame_pooling_param: null       # Parameter rules:
+                                  # mean, max : null
+                                  # mix       : mix_ratio in [0.0, 1.0]
+                                  # lnp       : p (integer), e.g., 2, 3, 4, 16
+                                  # smp       : lambda (float), e.g., 0.5 to 10.0
+                                  # lse       : r (float), e.g., 0.5 to 10.0
+                             
+  # Layer pooling: pools across selected transformer layers (layer dimension)
+  layer_pooling_type: mix    # Options (your Pooling class):
+                                  # mean      : Mean Pooling
+                                  # max       : Max Pooling
+                                  # mix       : Mixed Pooling (mix of max + mean)
+                                  # lnp       : Learned Norm Pooling
+                                  # smp       : Softmax Pooling
+                                  # lse       : Log Sum Exp Pooling
+                                  # weighted  : Position Weighted Pooling (learns per layer weights)
+                                  # gated     : Gated Pooling (learned gate between max and mean)
+                                  # auto      : Auto Pooling (learned alpha, like soft attention strength)
+                                  # sap       : Self Attentive Pooling
+
+  layer_pooling_param: 0.5       # Parameter rules (what value to provide):
+                                  # mean, max        : null (no parameter needed)
+                                  # weighted, gated  : null (no parameter needed)
+                                  # sap              : D (input_dim) = embedding dimension per layer (e.g., 512, 768, 1024)
+                                  # mix              : mix_ratio in [0.0, 1.0]
+                                  #                  0.0 -> pure mean, 1.0 -> pure max
+                                  # lnp              : p (integer norm order), typically 2, 3, 4
+                                  # smp              : lambda (float), controls sharpness (typical: 0.5 to 10.0)
+                                  # lse              : r (float), controls sharpness (typical: 0.5 to 10.0)
+                                  # auto             : init_alpha (float, optional), typical: 0.001 to 1.0 
+
+# ----------------------------
+# Downstream model architecture
+# ----------------------------
+model:
+  embedding_dim_shared1: 512    # Hidden dimension for first shared block
+  embedding_dim_shared2: 2000   # Hidden dimension for second shared block
+  dropout_prob_shared1: 0.4     # Dropout probability after shared block 1 (0.0 to 1.0)
+  dropout_prob_shared2: 0.6     # Dropout probability after shared block 2 (0.0 to 1.0)
+
+# ----------------------------
+# Training configuration
+# ----------------------------
+training:
+  num_epochs: 5
+  batch_size: 2048                # Adjust batch size based on dataset count
+  learning_rate: 0.0025
+  weight_decay: 0.00000005         # AdamW weight decay. Set 0.0 to disable.
+  saved_checkpoint_count: 1        # Number of recent checkpoints to keep (rolling)
+
+  shuffle_train: true             # Whether to shuffle training data in the DataLoader
+  shuffle_val: true               # Whether to shuffle validation data in the DataLoader
+  pin_memory: false               # Usually true when using CUDA + DataLoader
+  drop_last_train: true           # Drops last incomplete batch in training 
+  drop_last_val: false            # Drops last incomplete batch in validation
+  num_workers: 0                  # Increase if CPU loading is bottleneck (watch out with CUDA in workers)
+
+  patience: 1                     # ReduceLROnPlateau patience (epochs with no improvement)
+  factor: 0.5                     # ReduceLROnPlateau factor (new_lr = lr * factor)
+
+  l1_lambda: 0.0000001            # L1 regularization coefficient (0.0 disables)
+  l2_lambda: 0.00001              # Extra L2 coefficient 
+
+# ----------------------------
+# Evaluation configuration
+# ----------------------------
+evaluation:
+  batch_size: 1
+  shuffle: false
+  pin_memory: false
+  drop_last: false
+  num_workers: 0

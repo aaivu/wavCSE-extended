@@ -1,0 +1,86 @@
+# NCMTL v1 configuration for KS, speaker ID, and emotion recognition.
+
+log_level: INFO
+
+device:
+  type: cuda
+  index: 1
+
+paths:
+  root_data_path: ~/voice_dataset
+  root_emb_path: ~/dataset/embedding
+  results_root: results_ncmtl
+  checkpoints_root: checkpoints_ncmtl
+
+upstream:
+  model_type: wavlm_large
+  selected_transformer_layers: all
+
+dataset:
+  subset_percentage: 100
+  ignore_index: -1
+
+pooling:
+  frame_pooling_type: mean
+  frame_pooling_param: null
+  layer_pooling_type: mix
+  layer_pooling_param: 0.5
+
+model:
+  embedding_dim_shared1: 512
+  embedding_dim_shared2: 2000
+  dropout_prob_shared1: 0.4
+  dropout_prob_shared2: 0.6
+
+ncmtl:
+  num_clusters: 2
+  alpha: 0.001
+
+  cluster_every_n_batches: 5
+  warmup_epochs: 0
+
+  kmeans_random_state: 42
+  kmeans_n_init: 1
+  kmeans_max_iter: 100
+
+  freeze_on_stability: true
+  stability_patience: 50
+  min_epochs_before_freeze: 2
+  max_recluster_epochs: 10
+
+training:
+  num_epochs: 100
+  batch_size: 2048
+  learning_rate: 0.0025
+  label_smoothing: 0.1
+  weight_decay: 0.00000005
+  saved_checkpoint_count: 3
+
+  shuffle_train: true
+  shuffle_val: false
+  pin_memory: false
+  drop_last_train: true
+  drop_last_val: false
+  num_workers: 0
+
+  scheduler_patience: 3
+  scheduler_factor: 0.5
+
+  l1_lambda: 0.0000001
+  l2_lambda: 0.00001
+
+tensorboard:
+  enabled: false
+  gradient_log_interval: 10
+  histogram_epoch_interval: 1
+
+evaluation:
+  batch_size: 2048
+  shuffle: false
+  pin_memory: false
+  drop_last: false
+  num_workers: 0
+
+mlflow:
+  tracking_uri: https://dagshub.com/Ke-vin-S/wavCSE.mlflow
+  experiment_name: wavcse-ncmtl
