@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "experiment": "Experiment 5: Gradient-Clipping Stabilization Ablation",
+  "training_epochs": 100,
+  "task_type": "ks_si_er",
+  "scope": "Seed-42 all-layer clipped run and its matched unclipped Experiment 4 run",
+  "primary_selection_metric": "validation.opt.macro_task_accuracy",
+  "metric_policy": {
+    "macro_task_accuracy": "Arithmetic mean of KS, SI, and ER accuracies, weighted equally by task.",
+    "accuracy_all": "Sample-weighted accuracy across all labelled task examples.",
+    "test_usage": "Test results are descriptive outcomes of validation-selected checkpoints and were not used to select the method.",
+    "stability_definition": "Optimization stability and row-assignment stability are reported separately."
+  },
+  "configuration": {
+    "seed": 42,
+    "selected_transformer_layers": "all (0-24)",
+    "pooling": {"frame": "mean", "layer": "auto", "init_alpha": 0.01},
+    "candidate_dimension": 2000,
+    "identical_candidate_initialization": true,
+    "shared_activation": "none",
+    "cluster_alpha": 0.001,
+    "label_smoothing": 0.1,
+    "batch_size": 2048,
+    "initial_learning_rate": 0.0025,
+    "gradient_clip_norm": 1.0,
+    "adaptive_warmup": {"minimum_epochs": 3, "maximum_epochs": 10, "stability_threshold": 0.9, "patience": 2},
+    "soft_sharing": {"minimum_margin": 0.05, "full_sharing_margin": 0.2}
+  },
+  "run": {
+    "log": "improvements/clustering/logs/epoch100/5_grad_clip/run_2026_10_03_08_07_38.log",
+    "results": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42_100ep/2026_10_03_08_07_44",
+    "run_id": "2026_10_03_08_07_44",
+    "freeze": {
+      "epoch": 10,
+      "reason": "maximum adaptive warm-up reached",
+      "stability_gate_reached": false,
+      "final_warmup_stability": 0.776,
+      "stable_transition_count": 0,
+      "pair_counts": {"ks_si": 1600, "ks_er": 398, "si_er": 2},
+      "shared_pair_counts": {"ks_si": 1227, "ks_er": 198, "si_er": 0},
+      "independent_rows": 575,
+      "sharing_coverage": 0.7125,
+      "beta": {"mean": 0.310450, "median": 0.238320, "standard_deviation": 0.314483, "min": 0.0, "max": 1.0}
+    },
+    "post_freeze_assignment_match": {
+      "first": 0.935,
+      "epoch_30": 0.896,
+      "epoch_100": 0.812,
+      "minimum": 0.812,
+      "mean": 0.866594,
+      "interpretation": "Frozen assignments did not change; the current nearest-pair agreement with those forced assignments gradually declined."
+    },
+    "validation": {
+      "opt": {"epoch": 99, "accuracy_all": 0.980498, "macro_task_accuracy": 0.934931, "tasks": {"ks": 0.984554, "si": 0.988413, "er": 0.831826}},
+      "epoch_100_rounded": {"accuracy_all": 0.9801, "loss_all": 0.1660, "macro_task_accuracy": 0.933000, "tasks": {"ks": 0.9846, "si": 0.9880, "er": 0.8264}}
+    },
+    "test": {
+      "opt": {"accuracy_all": 0.981393, "loss_all": 0.137268, "macro_task_accuracy": 0.923464, "tasks": {"ks": 0.988296, "si": 0.988244, "er": 0.793852}},
+      "epoch_100": {"accuracy_all": 0.981585, "loss_all": 0.137144, "macro_task_accuracy": 0.925835, "tasks": {"ks": 0.988296, "si": 0.988123, "er": 0.801085}}
+    },
+    "optimization_stability": {
+      "nan_observed": false,
+      "loss_explosion_observed": false,
+      "final_learning_rate": 0.000078125,
+      "status": "stable_through_epoch_100"
+    }
+  },
+  "matched_unclipped_baseline": {
+    "log": "improvements/clustering/logs/epoch100/4_row_soft_margin/run_2026_10_02_03_19_04.log",
+    "results": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42_100ep/2026_10_02_03_19_19",
+    "freeze": {
+      "epoch": 4,
+      "reason": "assignment stability reached",
+      "final_warmup_stability": 0.95,
+      "pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}
+    },
+    "validation_opt": {"epoch": 99, "accuracy_all": 0.979516, "macro_task_accuracy": 0.932599, "tasks": {"ks": 0.986025, "si": 0.985371, "er": 0.826401}},
+    "test_opt": {"accuracy_all": 0.980370, "loss_all": 0.143248, "macro_task_accuracy": 0.928970, "tasks": {"ks": 0.987710, "si": 0.985456, "er": 0.813743}},
+    "optimization_stability": "Stable through 100 epochs without clipping."
+  },
+  "clip_minus_unclipped": {
+    "validation_opt_percentage_points": {
+      "accuracy_all": 0.0982,
+      "macro_task_accuracy": 0.2332,
+      "tasks": {"ks": -0.1471, "si": 0.3042, "er": 0.5425}
+    },
+    "test_opt_descriptive_percentage_points": {
+      "accuracy_all": 0.1023,
+      "macro_task_accuracy": -0.550567,
+      "tasks": {"ks": 0.0586, "si": 0.2788, "er": -1.9891}
+    }
+  },
+  "observations": [
+    "Both clipped and unclipped 100-epoch runs remained numerically stable, so clipping was not necessary for the all-layer configuration.",
+    "The clipped run slightly improved validation macro and sample-weighted test accuracy, but reduced descriptive test macro by 0.5506 percentage points because ER decreased by 1.9891 points.",
+    "Clipping did not satisfy the adaptive assignment-stability gate and forced assignment freezing at epoch 10, whereas the unclipped baseline naturally stabilized at epoch 4.",
+    "The dominant row pair changed from KS-ER without clipping to KS-SI with clipping, demonstrating a material change in the learned sharing structure.",
+    "Post-freeze nearest-pair agreement fell to 0.812 by epoch 100; assignments and beta remained frozen, so this is drift relative to the forced epoch-10 structure rather than reassignment."
+  ],
+  "decision": {
+    "status": "reject_as_default_keep_as_stabilization_ablation",
+    "summary": "The 100-epoch result does not justify max_norm=1.0 as the default. Its small weighted-accuracy gain is accompanied by forced row freezing and lower balanced test performance, particularly ER.",
+    "reporting_recommendation": "Report Experiment 5 as evidence that clipping can prevent catastrophic optimization but can interfere with NCMTL assignment discovery. Retain the unclipped protocol for subsequent primary experiments."
+  }
+}

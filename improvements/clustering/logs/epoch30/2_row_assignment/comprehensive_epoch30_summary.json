@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "title": "NCMTL 30-epoch matrix and row-assignment experiment summary",
+  "scope": "KS, speaker identification, and emotion recognition; all row-sharing runs completed on 2026-09-21",
+  "metric_policy": {
+    "primary": "validation.opt.macro_task_accuracy",
+    "macro_task_accuracy": "mean of KS, SI, and ER accuracies, weighted equally by task",
+    "accuracy_all": "accuracy weighted by the number of labelled task examples",
+    "checkpoint_tags": {
+      "best": "highest validation accuracy_all",
+      "opt": "highest validation macro_task_accuracy",
+      "epoch_30": "final epoch regardless of validation selection"
+    },
+    "test_usage": "Test values describe validation-selected checkpoints; do not use them to choose a method, seed, or threshold."
+  },
+  "common_configuration": {
+    "task_type": "ks_si_er",
+    "epochs": 30,
+    "pooling": {"layer": "auto", "init_alpha": 0.01, "frame": "mean"},
+    "shared_activation": "none",
+    "candidate_weight_shape_per_task": [2000, 2000],
+    "identical_candidate_initialization": true,
+    "batch_size": 2048,
+    "initial_learning_rate": 0.0025,
+    "label_smoothing": 0.1,
+    "cluster_alpha": 0.001,
+    "gradient_clip_norm": null,
+    "row_assignment_strategy": "closest pair by corresponding-row Euclidean distance",
+    "row_hard_sharing": "after each optimizer update, replace selected task-pair rows with their elementwise mean; the third row remains task-specific"
+  },
+  "matrix_baselines": {
+    "current_seed42": {
+      "run_id": "2026_09_21_05_30_35",
+      "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_05_30_30.log",
+      "results": "improvements/clustering/results_ncmtl/2026_09_21_05_30_35",
+      "method": "whole-matrix K-Means++ with two clusters, three-epoch warm-up, and hard sharing",
+      "cluster": {"groups": [["ks", "er"], ["si"]], "frozen_epoch": 6, "frozen_batch": 70},
+      "validation": {
+        "best": {"epoch": 29, "all": 0.971729, "macro": 0.916694, "ks": 0.983966, "si": 0.974073, "er": 0.792043},
+        "opt": {"epoch": 30, "all": 0.971378, "macro": 0.917552, "ks": 0.982054, "si": 0.974942, "er": 0.795660}
+      },
+      "test": {
+        "best": {"all": 0.973080, "loss_all": 0.151201, "macro": 0.903481, "ks": 0.986394, "si": 0.977215, "er": 0.746835},
+        "opt": {"all": 0.973464, "loss_all": 0.153787, "macro": 0.913259, "ks": 0.985955, "si": 0.976245, "er": 0.777577},
+        "epoch_30": {"all": 0.973464, "loss_all": 0.153787, "macro": 0.913259, "ks": 0.985955, "si": 0.976245, "er": 0.777577}
+      }
+    },
+    "historical_auto_0p01": {
+      "run_id": "2026_09_01_04_47_36",
+      "log": "improvements/clustering/logs/epoch30/0_init_pool/auto_run_2026_09_01_04_47_30.log",
+      "results": "improvements/clustering/results_ncmtl/2026_09_01_04_47_36",
+      "source_summary": "improvements/clustering/logs/epoch30/0_init_pool/auto_init_alpha_results_summary.json",
+      "cluster": {"groups": [["ks", "er"], ["si"]], "frozen_epoch": 6},
+      "validation_opt": {"epoch": 28, "all": 0.971238, "macro": 0.920791, "ks": 0.983672, "si": 0.972190, "er": 0.806510},
+      "test_opt": {"all": 0.971673, "loss_all": 0.152102, "macro": 0.906437, "ks": 0.984784, "si": 0.975033, "er": 0.759494},
+      "comparability_warning": "Historical run from an earlier code revision; global seed and gradient clipping state are not verified from its log. Retained as context, not used in paired-seed statistics."
+    }
+  },
+  "fixed_row_warmup": {
+    "seed42_warmup3": {
+      "run_id": "2026_09_21_07_14_51",
+      "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_07_14_40.log",
+      "results": "improvements/clustering/results_ncmtl/2026_09_21_07_14_51",
+      "freeze": {"epoch": 3, "sharing_began_epoch": 4, "pair_counts": {"ks_si": 563, "ks_er": 1032, "si_er": 405}, "shared_rows": 2000},
+      "confidence": {"median_relative_margin": 0.133103, "rows_below_0p10": 770},
+      "validation": {
+        "best": {"epoch": 30, "all": 0.970887, "macro": 0.915008, "ks": 0.984407, "si": 0.972190, "er": 0.788427},
+        "opt": {"epoch": 30, "all": 0.970887, "macro": 0.915008, "ks": 0.984407, "si": 0.972190, "er": 0.788427}
+      },
+      "test": {
+        "best": {"all": 0.970842, "loss_all": 0.158511, "macro": 0.901480, "ks": 0.985955, "si": 0.973458, "er": 0.745027},
+        "opt": {"all": 0.970842, "loss_all": 0.158511, "macro": 0.901480, "ks": 0.985955, "si": 0.973458, "er": 0.745027},
+        "epoch_30": {"all": 0.970842, "loss_all": 0.158511, "macro": 0.901480, "ks": 0.985955, "si": 0.973458, "er": 0.745027}
+      }
+    },
+    "seed42_warmup5": {
+      "run_id": "2026_09_21_08_06_10",
+      "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_08_06_00.log",
+      "results": "improvements/clustering/results_ncmtl/2026_09_21_08_06_10",
+      "freeze": {"epoch": 5, "sharing_began_epoch": 6, "pair_counts": {"ks_si": 504, "ks_er": 1181, "si_er": 315}, "shared_rows": 2000},
+      "pre_sharing_consecutive_stability": {"epoch_1_to_2": 0.8520, "epoch_2_to_3": 0.9405, "epoch_3_to_4": 0.9500, "epoch_4_to_5": 0.9585},
+      "confidence": {"median_relative_margin": 0.141322, "rows_below_0p10": 744},
+      "validation": {
+        "best": {"epoch": 29, "all": 0.971519, "macro": 0.907133, "ks": 0.986025, "si": 0.974073, "er": 0.761302},
+        "opt": {"epoch": 30, "all": 0.969414, "macro": 0.907883, "ks": 0.982054, "si": 0.973059, "er": 0.768535}
+      },
+      "test": {
+        "best": {"all": 0.973016, "loss_all": 0.154574, "macro": 0.902895, "ks": 0.986686, "si": 0.976972, "er": 0.745027},
+        "opt": {"all": 0.972760, "loss_all": 0.156423, "macro": 0.908332, "ks": 0.986247, "si": 0.975639, "er": 0.763110},
+        "epoch_30": {"all": 0.972760, "loss_all": 0.156423, "macro": 0.908332, "ks": 0.986247, "si": 0.975639, "er": 0.763110}
+      }
+    }
+  },
+  "adaptive_row_sharing": {
+    "rule": {"minimum_independent_epochs": 3, "maximum_independent_epochs": 10, "minimum_unchanged_row_fraction": 0.90, "required_consecutive_eligible_transitions": 2, "sharing_starts": "following epoch"},
+    "seed42": {
+      "pre_sharing_stability": [0.8520, 0.9405, 0.9500],
+      "all_rows": {
+        "run_id": "2026_09_21_10_14_28",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/adaptive_all_seed42_run_2026_09_21_10_14_23.log",
+        "results": "improvements/clustering/results_ncmtl/2026_09_21_10_14_28",
+        "freeze": {"epoch": 4, "final_stability": 0.9500, "pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_rows": 2000, "independent_rows": 0},
+        "validation": {
+          "best": {"epoch": 29, "all": 0.972711, "macro": 0.919029, "ks": 0.983230, "si": 0.976390, "er": 0.797468},
+          "opt": {"epoch": 29, "all": 0.972711, "macro": 0.919029, "ks": 0.983230, "si": 0.976390, "er": 0.797468}
+        },
+        "test": {
+          "best": {"all": 0.975510, "loss_all": 0.152258, "macro": 0.914594, "ks": 0.986686, "si": 0.979518, "er": 0.777577},
+          "opt": {"all": 0.975510, "loss_all": 0.152258, "macro": 0.914594, "ks": 0.986686, "si": 0.979518, "er": 0.777577},
+          "epoch_30": {"all": 0.972313, "loss_all": 0.159273, "macro": 0.901276, "ks": 0.985808, "si": 0.976609, "er": 0.741410}
+        }
+      },
+      "gated_0p10": {
+        "run_id": "2026_09_21_10_42_23",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/adaptive_gated_0p10_seed42_run_2026_09_21_10_42_18.log",
+        "results": "improvements/clustering/results_ncmtl_row_confidence_0p10/2026_09_21_10_42_23",
+        "freeze": {"epoch": 4, "final_stability": 0.9500, "pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_pair_counts": {"ks_si": 258, "ks_er": 830, "si_er": 156}, "shared_rows": 1244, "independent_rows": 756, "coverage": 0.6220},
+        "validation": {
+          "best": {"epoch": 30, "all": 0.971168, "macro": 0.916857, "ks": 0.982936, "si": 0.973783, "er": 0.793852},
+          "opt": {"epoch": 30, "all": 0.971168, "macro": 0.916857, "ks": 0.982936, "si": 0.973783, "er": 0.793852}
+        },
+        "test": {
+          "best": {"all": 0.973016, "loss_all": 0.156476, "macro": 0.911860, "ks": 0.986101, "si": 0.975518, "er": 0.773960},
+          "opt": {"all": 0.973016, "loss_all": 0.156476, "macro": 0.911860, "ks": 0.986101, "si": 0.975518, "er": 0.773960},
+          "epoch_30": {"all": 0.973016, "loss_all": 0.156476, "macro": 0.911860, "ks": 0.986101, "si": 0.975518, "er": 0.773960}
+        }
+      }
+    },
+    "seed43": {
+      "all_rows": {
+        "run_id": "2026_09_21_12_22_05",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_21_59.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed43/2026_09_21_12_22_05",
+        "freeze": {"epoch": 4, "final_stability": 0.9515, "pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_rows": 2000, "independent_rows": 0},
+        "validation": {
+          "best": {"epoch": 29, "all": 0.970116, "macro": 0.915025, "ks": 0.983230, "si": 0.971611, "er": 0.790235},
+          "opt": {"epoch": 29, "all": 0.970116, "macro": 0.915025, "ks": 0.983230, "si": 0.971611, "er": 0.790235}
+        },
+        "test": {
+          "best": {"all": 0.973720, "loss_all": 0.154464, "macro": 0.911188, "ks": 0.986247, "si": 0.976972, "er": 0.770344},
+          "opt": {"all": 0.973720, "loss_all": 0.154464, "macro": 0.911188, "ks": 0.986247, "si": 0.976972, "er": 0.770344},
+          "epoch_30": {"all": 0.973720, "loss_all": 0.157411, "macro": 0.915141, "ks": 0.986540, "si": 0.975882, "er": 0.783002}
+        }
+      },
+      "gated_0p10": {
+        "run_id": "2026_09_21_12_31_23",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_31_18.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed43/2026_09_21_12_31_23",
+        "freeze": {"epoch": 4, "final_stability": 0.9515, "pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_pair_counts": {"ks_si": 238, "ks_er": 836, "si_er": 75}, "shared_rows": 1149, "independent_rows": 851, "coverage": 0.5745},
+        "validation": {
+          "best": {"epoch": 13, "all": 0.961557, "macro": 0.900266, "ks": 0.983819, "si": 0.955678, "er": 0.761302},
+          "opt": {"epoch": 13, "all": 0.961557, "macro": 0.900266, "ks": 0.983819, "si": 0.955678, "er": 0.761302}
+        },
+        "test": {
+          "best": {"all": 0.959972, "loss_all": 0.184790, "macro": 0.891271, "ks": 0.986540, "si": 0.953097, "er": 0.734177},
+          "opt": {"all": 0.959972, "loss_all": 0.184790, "macro": 0.891271, "ks": 0.986540, "si": 0.953097, "er": 0.734177},
+          "epoch_30": {"all": 0.859518, "loss_all": 0.455445, "macro": 0.826279, "ks": 0.969715, "si": 0.776754, "er": 0.732369}
+        },
+        "instability": {"onset_epoch": 22, "train_loss_all_at_onset": 1001.9593, "val_loss_all_at_onset": 312.2299, "val_accuracy_all_at_epoch_30": 0.8691, "cause": "unknown; no NaN was logged, but losses surged and performance did not fully recover"}
+      }
+    },
+    "seed44": {
+      "all_rows": {
+        "run_id": "2026_09_21_12_26_49",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_26_43.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed44/2026_09_21_12_26_49",
+        "freeze": {"epoch": 4, "final_stability": 0.9420, "pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_rows": 2000, "independent_rows": 0},
+        "validation": {
+          "best": {"epoch": 29, "all": 0.971870, "macro": 0.915132, "ks": 0.984996, "si": 0.973783, "er": 0.786618},
+          "opt": {"epoch": 29, "all": 0.971870, "macro": 0.915132, "ks": 0.984996, "si": 0.973783, "er": 0.786618}
+        },
+        "test": {
+          "best": {"all": 0.973400, "loss_all": 0.157542, "macro": 0.913277, "ks": 0.986979, "si": 0.975276, "er": 0.777577},
+          "opt": {"all": 0.973400, "loss_all": 0.157542, "macro": 0.913277, "ks": 0.986979, "si": 0.975276, "er": 0.777577},
+          "epoch_30": {"all": 0.971673, "loss_all": 0.155088, "macro": 0.902617, "ks": 0.986832, "si": 0.974185, "er": 0.746835}
+        }
+      },
+      "gated_0p10": {
+        "run_id": "2026_09_21_12_43_29",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_43_23.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed44/2026_09_21_12_43_29",
+        "freeze": {"epoch": 4, "final_stability": 0.9420, "pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_pair_counts": {"ks_si": 105, "ks_er": 849, "si_er": 262}, "shared_rows": 1216, "independent_rows": 784, "coverage": 0.6080},
+        "validation": {
+          "best": {"epoch": 16, "all": 0.960996, "macro": 0.892107, "ks": 0.981906, "si": 0.958430, "er": 0.735986},
+          "opt": {"epoch": 13, "all": 0.960014, "macro": 0.905845, "ks": 0.981318, "si": 0.953216, "er": 0.783002}
+        },
+        "test": {
+          "best": {"all": 0.959652, "loss_all": 0.173763, "macro": 0.880871, "ks": 0.985223, "si": 0.955763, "er": 0.701627},
+          "opt": {"all": 0.960292, "loss_all": 0.176387, "macro": 0.898088, "ks": 0.984199, "si": 0.954187, "er": 0.755877},
+          "epoch_30": {"all": 0.805934, "loss_all": 0.610401, "macro": 0.783894, "ks": 0.938552, "si": 0.702460, "er": 0.710669}
+        },
+        "instability": {"onset_epoch": 23, "train_loss_all_at_onset": 834.1542, "val_loss_all_at_onset": 23.0769, "val_accuracy_all_at_epoch_30": 0.8291, "cause": "unknown; no NaN was logged, but losses surged and performance did not fully recover"}
+      }
+    }
+  },
+  "paired_seed_aggregate": {
+    "seeds": [42, 43, 44],
+    "validation_opt_macro": {
+      "all_rows": {"values": [0.919029, 0.915025, 0.915132], "mean": 0.916395, "sample_standard_deviation": 0.002281},
+      "gated_0p10": {"values": [0.916857, 0.900266, 0.905845], "mean": 0.907656, "sample_standard_deviation": 0.008442},
+      "paired_all_minus_gated": {"values": [0.002172, 0.014759, 0.009287], "mean": 0.008739, "all_rows_wins": 3}
+    },
+    "test_opt_macro_descriptive_only": {
+      "all_rows": {"values": [0.914594, 0.911188, 0.913277], "mean": 0.913020, "sample_standard_deviation": 0.001718},
+      "gated_0p10": {"values": [0.911860, 0.891271, 0.898088], "mean": 0.900406, "sample_standard_deviation": 0.010488},
+      "paired_all_minus_gated": {"values": [0.002734, 0.019917, 0.015189], "mean": 0.012613}
+    },
+    "freeze_pattern": "All six adaptive runs froze after epoch 4 and began sharing in epoch 5; within each seed, proposed row-pair counts matched before applying the confidence gate."
+  },
+  "observations": [
+    "Whole-matrix NCMTL grouped KS with ER and isolated SI in both matrix baselines.",
+    "Fixed five-epoch warm-up produced more stable row assignments and a slightly higher median margin than fixed three-epoch warm-up, but lower validation macro accuracy; stability alone did not predict generalization.",
+    "Adaptive all-row sharing was the strongest row method on all three paired validation runs and showed a much narrower across-seed spread than confidence gating.",
+    "The 10% gate left 756, 851, and 784 rows independent for seeds 42, 43, and 44. It did not improve validation macro accuracy for any of the three seeds.",
+    "Gated seeds 43 and 44 had severe finite-loss spikes at epochs 22 and 23. Their opt checkpoints came from epoch 13, before the spikes; their epoch-30 checkpoints are substantially worse.",
+    "A declining gated row-pair match rate does not indicate changing frozen assignments. Shared rows remain close by construction, while independent rows can change their current closest pair.",
+    "The contemporary matrix baseline has only seed 42, so a multi-seed claim that adaptive all-row sharing beats matrix-level NCMTL is not supported yet."
+  ],
+  "recommendation": {
+    "among_adaptive_row_methods_for_100_epochs": "all_rows",
+    "confidence_gate_0p10": "do_not_use_for_final_run",
+    "reason": "All-row adaptive sharing beat 10% gating on validation macro accuracy for every paired seed and avoided the severe late loss spikes seen in two gated runs.",
+    "100_epoch_configuration": "Use adaptive row sharing, minimum warm-up 3, maximum warm-up 10, stability threshold 0.90, patience 2, row_min_relative_margin 0.0, no shared activation, auto pooling 0.01, and a new result/checkpoint root. Increase training.num_epochs to 100.",
+    "checkpoint_for_reporting": "Select opt using validation macro task accuracy; do not automatically report the epoch-100 checkpoint or select by test accuracy.",
+    "monitoring": "Watch validation macro and task accuracies, training/validation loss spikes, and learning-rate reductions; retain the validation-opt checkpoint if later epochs degrade.",
+    "limits": [
+      "Three paired seeds support a method choice between ungated and 10% gated adaptive row sharing, not a proof of universal superiority.",
+      "Gated spike cause is undiagnosed; no NaN was logged and lack of gradient clipping is only a possible contributor, not an established cause.",
+      "Seed-42 paired runs used different GPU indices, and the historical matrix run predates the current code revision."
+    ]
+  }
+}

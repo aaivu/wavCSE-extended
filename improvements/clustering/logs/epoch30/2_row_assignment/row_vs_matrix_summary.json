@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "experiment": {
+    "name": "NCMTL frozen closest-pair row sharing versus matrix-level K-Means sharing",
+    "task_type": "ks_si_er",
+    "epochs": 30,
+    "seed": 42,
+    "primary_selection_metric": "validation.opt.macro_task_accuracy",
+    "selection_note": "The comparison and recommendation use validation metrics. Test metrics are reported only as descriptive confirmation.",
+    "common_settings": {
+      "pooling": {"type": "auto", "init_alpha": 0.01},
+      "shared_activation": "none",
+      "candidate_dim": 2000,
+      "identical_candidate_initialization": true,
+      "warmup_epochs": 3,
+      "label_smoothing": 0.1,
+      "learning_rate": 0.0025,
+      "batch_size": 2048
+    },
+    "method_difference": {
+      "matrix": "K-Means clusters the three complete flattened candidate matrices, then hard-shares the complete matrices within the learned task cluster.",
+      "row": "At the end of warm-up, each of the 2000 corresponding candidate rows selects its closest task pair. The assignments are frozen and the selected pair is averaged after every optimizer update."
+    },
+    "limitations": [
+      "This comparison contains one run per method, although both runs use seed 42 and otherwise matching primary training settings.",
+      "The row method forces all 2000 rows to share even when the closest and second-closest pairs are nearly tied.",
+      "Post-assignment 100% row stability is self-reinforced by hard sharing and is not evidence that the rows would remain naturally stable without sharing.",
+      "The matrix method froze its global assignment at epoch 6, whereas row assignments were derived from epoch-3 weights and applied from epoch 4. This timing is part of the compared methods."
+    ]
+  },
+  "methods": {
+    "matrix": {
+      "run_id": "2026_09_21_05_30_35",
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_05_30_30.log",
+        "result_directory": "improvements/clustering/results_ncmtl/2026_09_21_05_30_35"
+      },
+      "sharing": {
+        "granularity": "matrix",
+        "assignments": {"ks": 0, "si": 1, "er": 0},
+        "groups": [["ks", "er"], ["si"]],
+        "frozen": true,
+        "frozen_epoch": 6
+      },
+      "validation": {
+        "best": {
+          "epoch": 29,
+          "accuracy_all": 0.971729,
+          "macro_task_accuracy": 0.916694,
+          "tasks": {"ks": 0.983966, "si": 0.974073, "er": 0.792043}
+        },
+        "opt": {
+          "epoch": 30,
+          "accuracy_all": 0.971378,
+          "macro_task_accuracy": 0.917552,
+          "tasks": {"ks": 0.982054, "si": 0.974942, "er": 0.795660}
+        }
+      },
+      "test": {
+        "best": {
+          "accuracy_all": 0.973080,
+          "loss_all": 0.151201,
+          "macro_task_accuracy": 0.903481,
+          "macro_task_loss": 0.417201,
+          "tasks": {
+            "ks": {"accuracy": 0.986394, "loss": 0.150662, "samples": 6835},
+            "si": {"accuracy": 0.977215, "loss": 0.481308, "samples": 8251},
+            "er": {"accuracy": 0.746835, "loss": 0.619632, "samples": 553}
+          }
+        },
+        "opt": {
+          "accuracy_all": 0.973464,
+          "loss_all": 0.153787,
+          "macro_task_accuracy": 0.913259,
+          "macro_task_loss": 0.416099,
+          "tasks": {
+            "ks": {"accuracy": 0.985955, "loss": 0.163612, "samples": 6835},
+            "si": {"accuracy": 0.976245, "loss": 0.487940, "samples": 8251},
+            "er": {"accuracy": 0.777577, "loss": 0.596746, "samples": 553}
+          }
+        }
+      }
+    },
+    "row": {
+      "run_id": "2026_09_21_07_14_51",
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_07_14_40.log",
+        "result_directory": "improvements/clustering/results_ncmtl/2026_09_21_07_14_51"
+      },
+      "sharing": {
+        "granularity": "row",
+        "strategy": "closest_pair",
+        "num_rows": 2000,
+        "frozen": true,
+        "frozen_epoch": 3,
+        "counts": {"ks_si": 563, "ks_er": 1032, "si_er": 405},
+        "proportions": {"ks_si": 0.2815, "ks_er": 0.5160, "si_er": 0.2025},
+        "confidence": {
+          "median_relative_margin_all": 0.1331,
+          "mean_relative_margin_all": 0.1587,
+          "rows_below_0.05": 370,
+          "rows_below_0.10": 770,
+          "rows_below_0.20": 1374,
+          "median_relative_margin_by_pair": {
+            "ks_si": 0.0991,
+            "ks_er": 0.1729,
+            "si_er": 0.0922
+          }
+        }
+      },
+      "validation": {
+        "best": {
+          "epoch": 30,
+          "accuracy_all": 0.970887,
+          "macro_task_accuracy": 0.915008,
+          "tasks": {"ks": 0.984407, "si": 0.972190, "er": 0.788427}
+        },
+        "opt": {
+          "epoch": 30,
+          "accuracy_all": 0.970887,
+          "macro_task_accuracy": 0.915008,
+          "tasks": {"ks": 0.984407, "si": 0.972190, "er": 0.788427}
+        }
+      },
+      "test": {
+        "best": {
+          "accuracy_all": 0.970842,
+          "loss_all": 0.158511,
+          "macro_task_accuracy": 0.901480,
+          "macro_task_loss": 0.435928,
+          "tasks": {
+            "ks": {"accuracy": 0.985955, "loss": 0.155401, "samples": 6835},
+            "si": {"accuracy": 0.973458, "loss": 0.507570, "samples": 8251},
+            "er": {"accuracy": 0.745027, "loss": 0.644814, "samples": 553}
+          }
+        },
+        "opt": {
+          "accuracy_all": 0.970842,
+          "loss_all": 0.158511,
+          "macro_task_accuracy": 0.901480,
+          "macro_task_loss": 0.435928,
+          "tasks": {
+            "ks": {"accuracy": 0.985955, "loss": 0.155401, "samples": 6835},
+            "si": {"accuracy": 0.973458, "loss": 0.507570, "samples": 8251},
+            "er": {"accuracy": 0.745027, "loss": 0.644814, "samples": 553}
+          }
+        }
+      }
+    }
+  },
+  "row_minus_matrix": {
+    "validation_opt": {
+      "accuracy_all": -0.000491,
+      "macro_task_accuracy": -0.002544,
+      "tasks": {"ks": 0.002353, "si": -0.002752, "er": -0.007233}
+    },
+    "test_opt_descriptive_only": {
+      "accuracy_all": -0.002622,
+      "loss_all": 0.004724,
+      "macro_task_accuracy": -0.011779,
+      "macro_task_loss": 0.019829,
+      "tasks": {"ks": 0.000000, "si": -0.002787, "er": -0.032550}
+    }
+  },
+  "conclusion": {
+    "validation_winner": "matrix",
+    "is_unconditional_row_sharing_good_enough_to_replace_matrix_sharing": false,
+    "assessment": "The row-level implementation is technically functional and preserves strong KS performance, but it did not improve the declared validation metric. Matrix sharing achieved higher validation macro accuracy and overall accuracy. The validation-selected test checkpoint also shows a substantial ER reduction under row sharing.",
+    "likely_issue": "All rows are forced to share even though 770 of 2000 assignments have less than a 10% relative margin and 1374 have less than a 20% margin. Weak assignments may introduce negative transfer, especially for ER.",
+    "recommended_next_step": "Complete the planned five-epoch warm-up comparison. If it does not exceed matrix sharing on validation macro accuracy, retain matrix sharing as the primary method and test confidence-gated row sharing rather than unconditional row sharing.",
+    "suggested_confidence_ablation": {
+      "relative_margin_thresholds": [0.10, 0.20],
+      "rule": "Only hard-share rows whose frozen closest-pair relative margin reaches the threshold; leave all other task rows independent."
+    }
+  }
+}

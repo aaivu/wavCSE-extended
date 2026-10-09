@@ -14,7 +14,11 @@ class DownstreamMultiTaskModelNCMTL(DownstreamMultiTaskModel):
     SUPPORTED_TASK_TYPE = "ks_si_er"
 
     def __init__(
-        self, *args, identical_candidate_initialization: bool = False, **kwargs
+        self,
+        *args,
+        identical_candidate_initialization: bool = False,
+        shared_activation: str = "none",
+        **kwargs,
     ):
         task_type = kwargs.get("task_type")
         if task_type is None and len(args) >= 2:
@@ -25,6 +29,19 @@ class DownstreamMultiTaskModelNCMTL(DownstreamMultiTaskModel):
                 "(three tasks; intent classification is not supported)."
             )
         super().__init__(*args, **kwargs)
+
+        self.shared_activation_name = str(shared_activation).strip().lower()
+        activation_types = {
+            "none": nn.Identity,
+            "relu": nn.ReLU,
+            "gelu": nn.GELU,
+        }
+        if self.shared_activation_name not in activation_types:
+            raise ValueError(
+                "shared_activation must be one of: none, relu, gelu; "
+                f"got {shared_activation!r}"
+            )
+        self.shared_activation = activation_types[self.shared_activation_name]()
 
         embedding_dim_shared2 = int(self.hidden_layer.out_features)
         output_dims = self._output_dims_from_task_type(task_type)
@@ -55,10 +72,12 @@ class DownstreamMultiTaskModelNCMTL(DownstreamMultiTaskModel):
 
     def _shared_embedding(self, input_seq: torch.Tensor, apply_dropout: bool) -> torch.Tensor:
         embedding = self.projector_layer(input_seq)
+        embedding = self.shared_activation(embedding)
         embedding = self.pooling.get_vector_after_pooling(embedding, dim=1)
         if apply_dropout:
             embedding = self.dropout_shared1(embedding)
         embedding = self.hidden_layer(embedding)
+        embedding = self.shared_activation(embedding)
         if apply_dropout:
             embedding = self.dropout_shared2(embedding)
         return embedding

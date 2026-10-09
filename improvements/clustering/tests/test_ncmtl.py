@@ -1,5 +1,6 @@
 """Synthetic, data-free checks for the three-task NCMTL implementation."""
 
+import json
 import os
 import sys
 import tempfile
@@ -21,9 +22,17 @@ from improvements.clustering.utils.ncmtl_clustering import (
     canonicalize_cluster_labels,
     cluster_candidate_weights,
 )
+from improvements.clustering.utils.candidate_row_distances import (
+    compute_candidate_row_distances,
+)
+from improvements.clustering.utils.row_task_sharing import RowTaskSharing
 
 
-def build_model(task_type="ks_si_er", identical_candidate_initialization=False):
+def build_model(
+    task_type="ks_si_er",
+    identical_candidate_initialization=False,
+    shared_activation="none",
+):
     return DownstreamMultiTaskModelNCMTL(
         upstream_model_type="wavlm_base",
         task_type=task_type,
@@ -33,6 +42,7 @@ def build_model(task_type="ks_si_er", identical_candidate_initialization=False):
         layer_pooling_param=None,
         dropout_prob_shared1=0.0,
         dropout_prob_shared2=0.0,
+        shared_activation=shared_activation,
         identical_candidate_initialization=identical_candidate_initialization,
     )
 
@@ -131,6 +141,32 @@ class NCMTLModelTests(unittest.TestCase):
             model.candidate_layers[1].weight,
         ))
 
+    def test_configurable_shared_activation_runs_after_fc1_and_fc2(self):
+        expected_types = {
+            "none": torch.nn.Identity,
+            "relu": torch.nn.ReLU,
+            "gelu": torch.nn.GELU,
+        }
+        inputs = torch.randn(2, 3, 768)
+        for name, expected_type in expected_types.items():
+            with self.subTest(activation=name):
+                model = build_model(shared_activation=name)
+                calls = []
+                handle = model.shared_activation.register_forward_hook(
+                    lambda module, args, output: calls.append(tuple(output.shape))
+                )
+                outputs = model(inputs)
+                handle.remove()
+
+                self.assertIsInstance(model.shared_activation, expected_type)
+                self.assertEqual(model.shared_activation_name, name)
+                self.assertEqual(calls, [(2, 3, 16), (2, 8)])
+                self.assertEqual(tuple(outputs.logits[0].shape), (2, 12))
+
+    def test_invalid_shared_activation_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "none, relu, gelu"):
+            build_model(shared_activation="tanh")
+
     def test_production_candidate_and_classifier_dimensions(self):
         model = DownstreamMultiTaskModelNCMTL(
             upstream_model_type="wavlm_large",
@@ -163,6 +199,20 @@ class NCMTLModelTests(unittest.TestCase):
             [(2, 12), (2, 1251), (2, 4)],
         )
         self.assertEqual(tuple(model.get_all_embeddings(inputs).shape), (2, 2000))
+
+    def test_candidate_row_distances_preserve_every_row(self):
+        model = build_model(identical_candidate_initialization=True)
+        with torch.no_grad():
+            model.candidate_layers[1].weight[0].add_(1.0)
+            model.candidate_layers[2].weight[1].add_(2.0)
+
+        distances = compute_candidate_row_distances(
+            model.get_candidate_weight_tensors(), ["ks", "si", "er"]
+        )
+        self.assertEqual(set(distances), {"ks_si", "ks_er", "si_er"})
+        self.assertTrue(all(tuple(values.shape) == (8,) for values in distances.values()))
+        self.assertGreater(float(distances["ks_si"][0]), 0.0)
+        self.assertEqual(float(distances["ks_si"][1]), 0.0)
 
     def test_hard_sharing_and_cluster_loss(self):
         model = build_model()
@@ -284,6 +334,171 @@ class NCMTLTrainerTests(unittest.TestCase):
                 trainer.model.candidate_layers[0].weight,
                 trainer.model.candidate_layers[1].weight,
             ))
+
+    def test_row_distance_diagnostics_write_epoch_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            trainer = self._build_trainer(
+                directory,
+                log_candidate_row_distances=True,
+            )
+            trainer._process_data_loader(trainer.train_dataloader, train_mode=True)
+
+            with open(trainer.row_distance_logger.matrices_path) as matrices_file:
+                matrices = json.load(matrices_file)
+            with open(trainer.row_distance_logger.values_path) as values_file:
+                values = json.load(values_file)
+
+            self.assertEqual(len(matrices), 1)
+            self.assertEqual(len(values), 1)
+            self.assertEqual(matrices[0]["stage"], "post_optimizer_pre_sharing")
+            self.assertEqual(len(matrices[0]["matrix"]), 3)
+            self.assertEqual(set(values[0]["values"]), {"ks_si", "ks_er", "si_er"})
+            self.assertTrue(all(
+                len(pair_values) == 8
+                for pair_values in values[0]["values"].values()
+            ))
+
+    def test_row_sharing_freezes_warmup_assignments_and_writes_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            trainer = self._build_trainer(
+                directory,
+                sharing_granularity="row",
+                warmup_epochs=1,
+                log_candidate_row_distances=True,
+            )
+            trainer._process_data_loader(trainer.train_dataloader, train_mode=True)
+            self.assertFalse(trainer.row_task_sharing.initialized)
+
+            trainer._process_data_loader(trainer.train_dataloader, train_mode=True)
+            self.assertTrue(trainer.row_task_sharing.initialized)
+            self.assertEqual(trainer.row_task_sharing.assignment_epoch, 1)
+            self.assertEqual(
+                sum(trainer.row_task_sharing.assignment_counts().values()), 8
+            )
+            self.assertTrue(os.path.exists(
+                trainer.row_task_sharing.assignment_csv_path
+            ))
+            self.assertTrue(os.path.exists(
+                trainer.row_task_sharing.assignment_summary_path
+            ))
+
+            weights = trainer.model.get_candidate_weight_tensors()
+            assignments = trainer.row_task_sharing.assignments
+            pair_indices = ((0, 1), (0, 2), (1, 2))
+            for pair_id, (first, second) in enumerate(pair_indices):
+                mask = assignments == pair_id
+                if bool(torch.any(mask)):
+                    self.assertTrue(torch.equal(
+                        weights[first][mask], weights[second][mask]
+                    ))
+
+    def test_adaptive_row_warmup_freezes_after_stability_patience(self):
+        with tempfile.TemporaryDirectory() as directory:
+            trainer = self._build_trainer(
+                directory,
+                sharing_granularity="row",
+                row_warmup_mode="adaptive",
+                row_warmup_min_epochs=2,
+                row_warmup_max_epochs=5,
+                row_warmup_stability_threshold=0.0,
+                row_warmup_stability_patience=2,
+                log_candidate_row_distances=True,
+            )
+
+            for _ in range(3):
+                trainer._process_data_loader(
+                    trainer.train_dataloader, train_mode=True
+                )
+
+            self.assertFalse(trainer.row_task_sharing.initialized)
+            self.assertTrue(trainer.row_task_sharing.ready_to_freeze)
+            self.assertEqual(trainer.row_task_sharing.assignment_epoch, 3)
+            self.assertEqual(trainer.row_task_sharing.stable_transition_count, 2)
+
+            trainer._process_data_loader(trainer.train_dataloader, train_mode=True)
+            self.assertTrue(trainer.row_task_sharing.initialized)
+            self.assertTrue(os.path.exists(
+                trainer.row_task_sharing.warmup_stability_path
+            ))
+            self.assertTrue(os.path.exists(
+                trainer.row_task_sharing.warmup_summary_path
+            ))
+
+    def test_confidence_gate_leaves_uncertain_rows_independent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            trainer = self._build_trainer(
+                directory,
+                sharing_granularity="row",
+                row_warmup_mode="fixed",
+                warmup_epochs=1,
+                row_min_relative_margin=1.0,
+            )
+            trainer._process_data_loader(trainer.train_dataloader, train_mode=True)
+            trainer._process_data_loader(trainer.train_dataloader, train_mode=True)
+
+            self.assertTrue(trainer.row_task_sharing.initialized)
+            self.assertEqual(
+                sum(trainer.row_task_sharing.shared_assignment_counts().values()),
+                0,
+            )
+            self.assertEqual(
+                int(torch.sum(~trainer.row_task_sharing.shared_row_mask).item()),
+                8,
+            )
+
+    def test_confidence_aware_soft_sharing_uses_frozen_coefficients(self):
+        with tempfile.TemporaryDirectory() as directory:
+            sharing = RowTaskSharing(
+                directory,
+                ["ks", "si", "er"],
+                sharing_mode="soft",
+                soft_min_margin=0.10,
+                soft_full_margin=0.50,
+            )
+            weights = [
+                torch.tensor([[0.0], [0.0], [0.0]]),
+                torch.tensor([[0.7], [0.95], [2.0]]),
+                torch.tensor([[1.7], [1.95], [10.0]]),
+            ]
+            sharing.initialize(weights, epoch=3)
+
+            self.assertTrue(torch.allclose(
+                sharing.sharing_coefficients,
+                torch.tensor([0.5, 0.0, 1.0]),
+                atol=1e-6,
+            ))
+            coefficients_before = sharing.sharing_coefficients.clone()
+            self.assertAlmostEqual(float(sharing.cluster_loss(weights)), 2.1225, places=5)
+
+            sharing.share(weights)
+            self.assertTrue(torch.equal(
+                sharing.sharing_coefficients, coefficients_before
+            ))
+            self.assertTrue(torch.allclose(weights[0][0], torch.tensor([0.175])))
+            self.assertTrue(torch.allclose(weights[1][0], torch.tensor([0.525])))
+            self.assertTrue(torch.allclose(weights[0][1], torch.tensor([0.0])))
+            self.assertTrue(torch.allclose(weights[1][1], torch.tensor([0.95])))
+            self.assertTrue(torch.allclose(weights[0][2], weights[1][2]))
+
+            with open(sharing.assignment_summary_path) as summary_file:
+                summary = json.load(summary_file)
+            self.assertEqual(summary["sharing_mode"], "soft")
+            self.assertEqual(summary["independent_rows"], 1)
+            self.assertEqual(summary["partially_shared_rows"], 1)
+            self.assertEqual(summary["fully_shared_rows"], 1)
+
+    def test_soft_sharing_configuration_is_validated(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(
+                ValueError, "greater than row_soft_min_margin"
+            ):
+                RowTaskSharing(
+                    directory,
+                    ["ks", "si", "er"],
+                    sharing_mode="soft",
+                    soft_min_margin=0.20,
+                    soft_full_margin=0.20,
+                )
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ seed: 42  # improvements/seed_utils.py -- override here or with --seed for multi
 
 device:
   type: cuda
-  index: 0
+  index: 1
 
 paths:
   root_data_path: ~/voice_dataset
@@ -42,12 +42,7 @@ ncmtl:
   log_candidate_row_distances: true
 
   cluster_every_n_batches: 5
-  warmup_epochs: 3
-  row_warmup_mode: adaptive
-  row_warmup_min_epochs: 3
-  row_warmup_max_epochs: 10
-  row_warmup_stability_threshold: 0.90
-  row_warmup_stability_patience: 2
+  warmup_epochs: 5
 
   kmeans_random_state: 42
   kmeans_n_init: 10

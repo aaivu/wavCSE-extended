@@ -1,7 +1,7 @@
-# NCMTL v1 configuration for KS, speaker ID, and emotion recognition.
+# NCMTL cluster-regularization sweep: Auto pooling init_alpha=0.01,
+# cluster-loss alpha=0.01, GPU 0.
 
 log_level: INFO
-seed: 42  # improvements/seed_utils.py -- override here or with --seed for multi-seed runs
 
 device:
   type: cuda
@@ -10,8 +10,8 @@ device:
 paths:
   root_data_path: ~/voice_dataset
   root_emb_path: ~/dataset/embedding
-  results_root: results_ncmtl
-  checkpoints_root: checkpoints_ncmtl
+  results_root: results_ncmtl_auto_0p01_cluster_alpha_0p01
+  checkpoints_root: checkpoints_ncmtl_auto_0p01_cluster_alpha_0p01
 
 upstream:
   model_type: wavlm_large
@@ -32,22 +32,14 @@ model:
   embedding_dim_shared2: 2000
   dropout_prob_shared1: 0.4
   dropout_prob_shared2: 0.6
-  shared_activation: none
 
 ncmtl:
-  sharing_granularity: row
   num_clusters: 2
-  alpha: 0.001
+  alpha: 0.01
   identical_candidate_initialization: true
-  log_candidate_row_distances: true
 
   cluster_every_n_batches: 5
   warmup_epochs: 3
-  row_warmup_mode: adaptive
-  row_warmup_min_epochs: 3
-  row_warmup_max_epochs: 10
-  row_warmup_stability_threshold: 0.90
-  row_warmup_stability_patience: 2
 
   kmeans_random_state: 42
   kmeans_n_init: 10
@@ -93,4 +85,4 @@ evaluation:
 
 mlflow:
   tracking_uri: https://dagshub.com/Ke-vin-S/wavCSE.mlflow
-  experiment_name: wavcse-ncmtl
+  experiment_name: wavcse-ncmtl-auto-0p01-cluster-alpha-0p01

@@ -1,0 +1,1801 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-10-06T13:26:06+00:00",
+  "experiment": {
+    "method": "bottom_layer_dropping",
+    "display_name": "Bottom-layer dropping",
+    "description": "Drops the lowest-index transformer layers first.",
+    "task_type": "ks_si_er",
+    "epochs": 30
+  },
+  "selection_policy": {
+    "primary_metric": "validation_opt_macro_task_accuracy",
+    "tie_breakers": [
+      "fewer_dropped_layers",
+      "method_name"
+    ],
+    "test_set_role": "Report only; never used to select or rank configurations.",
+    "stability_gate": "Recommendation is restricted to runs without non-finite values or late loss explosion."
+  },
+  "parameter_accounting_policy": {
+    "all_layer_ncmtl_trainable_downstream_parameters": 16086068,
+    "original_wavcse_trainable_downstream_parameters": 4086067,
+    "candidate_layer_parameters_added_by_ncmtl": 12000000,
+    "important_note": "Changing selected_transformer_layers does not change trainable parameter count. It reduces representation input size and projector operations only."
+  },
+  "baselines": {
+    "all_layer_ncmtl": {
+      "description": "All 25 cached transformer-layer representations with the same NCMTL soft-row-sharing setup.",
+      "source": {
+        "log_file": "improvements/clustering/logs/epoch30/layer_reduction/top_layer_dropping/run_2026_09_29_11_30_22.log",
+        "result_directory": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27",
+        "config_file": "improvements/clustering/configs/experiment4_soft_row_sharing/soft_margin_0p05_0p20_seed42.yml"
+      },
+      "validation_opt": {
+        "selection_metric": "validation_macro_task_accuracy",
+        "epoch": 25,
+        "epoch_source": "inferred_from_rounded_epoch_metrics",
+        "accuracy_all": 0.970747,
+        "loss_all": 0.2144,
+        "tasks": {
+          "ks": {
+            "accuracy": 0.981171,
+            "loss": 0.1543
+          },
+          "si": {
+            "accuracy": 0.973783,
+            "loss": 0.4936
+          },
+          "er": {
+            "accuracy": 0.804702,
+            "loss": 0.5677
+          }
+        },
+        "macro_task_accuracy": 0.9198853333333333
+      },
+      "test_opt": {
+        "source_file": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27/eval_metrics_opt.txt",
+        "loss_all": 0.155131,
+        "accuracy_all": 0.97308,
+        "tasks": {
+          "ks": {
+            "loss": 0.147811,
+            "accuracy": 0.984784,
+            "samples": 6835
+          },
+          "si": {
+            "loss": 0.505395,
+            "accuracy": 0.975518,
+            "samples": 8251
+          },
+          "er": {
+            "loss": 0.604932,
+            "accuracy": 0.792043,
+            "samples": 553
+          }
+        },
+        "macro_task_accuracy": 0.9174483333333333
+      },
+      "trainable_downstream_parameters": 16086068
+    },
+    "original_wavcse_reference": {
+      "description": "Original wavCSE result supplied in the experiment table; validation, overall test accuracy, and test loss were not supplied.",
+      "test_task_accuracy": {
+        "ks": 0.9881,
+        "si": 0.9759,
+        "er": 0.7939
+      },
+      "test_macro_task_accuracy": 0.9193,
+      "trainable_downstream_parameters_matching_current_task_heads": 4086067,
+      "comparison_scope": "Downstream network only; excludes the upstream WavLM encoder."
+    }
+  },
+  "runs": [
+    {
+      "run_id": "run_2026_09_29_11_30_22",
+      "method": "top_layer_dropping",
+      "method_display_name": "Top-layer dropping",
+      "variant": "all",
+      "k_dropped": 0,
+      "selected_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "removed_layers": [],
+      "selected_layer_count": 25,
+      "source": {
+        "log_file": "improvements/clustering/logs/epoch30/layer_reduction/top_layer_dropping/run_2026_09_29_11_30_22.log",
+        "result_directory": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27",
+        "config_file": "improvements/clustering/configs/experiment4_soft_row_sharing/soft_margin_0p05_0p20_seed42.yml"
+      },
+      "configuration": {
+        "task_type": "ks_si_er",
+        "epochs": 30,
+        "seed": 42,
+        "pooling": "auto 0.01",
+        "candidate_dim": 2000,
+        "label_smoothing": 0.1,
+        "sharing_mode": "row_soft_margin"
+      },
+      "validation": {
+        "source_file": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27/train_ks_si_er.txt",
+        "completed_epochs": 30,
+        "best": {
+          "selection_metric": "validation_accuracy_all",
+          "epoch": 24,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.971098,
+          "loss_all": 0.2161,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.983377,
+              "loss": 0.1459
+            },
+            "si": {
+              "accuracy": 0.974652,
+              "loss": 0.4938
+            },
+            "er": {
+              "accuracy": 0.775769,
+              "loss": 0.6189
+            }
+          },
+          "macro_task_accuracy": 0.911266
+        },
+        "opt": {
+          "selection_metric": "validation_macro_task_accuracy",
+          "epoch": 25,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.970747,
+          "loss_all": 0.2144,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.981171,
+              "loss": 0.1543
+            },
+            "si": {
+              "accuracy": 0.973783,
+              "loss": 0.4936
+            },
+            "er": {
+              "accuracy": 0.804702,
+              "loss": 0.5677
+            }
+          },
+          "macro_task_accuracy": 0.9198853333333333
+        }
+      },
+      "test": {
+        "opt": {
+          "source_file": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27/eval_metrics_opt.txt",
+          "loss_all": 0.155131,
+          "accuracy_all": 0.97308,
+          "tasks": {
+            "ks": {
+              "loss": 0.147811,
+              "accuracy": 0.984784,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.505395,
+              "accuracy": 0.975518,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.604932,
+              "accuracy": 0.792043,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.9174483333333333
+        },
+        "best": {
+          "source_file": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27/eval_metrics_best.txt",
+          "loss_all": 0.155332,
+          "accuracy_all": 0.97129,
+          "tasks": {
+            "ks": {
+              "loss": 0.140663,
+              "accuracy": 0.985223,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.502696,
+              "accuracy": 0.97467,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.651826,
+              "accuracy": 0.748644,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.9028456666666667
+        },
+        "epoch": {
+          "source_file": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27/eval_metrics_epoch.txt",
+          "loss_all": 0.158485,
+          "accuracy_all": 0.97097,
+          "tasks": {
+            "ks": {
+              "loss": 0.146484,
+              "accuracy": 0.985662,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.50506,
+              "accuracy": 0.9737,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.692393,
+              "accuracy": 0.748644,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.9026686666666667
+        }
+      },
+      "row_sharing": {
+        "assignment_counts": {
+          "ks_si": 533,
+          "ks_er": 1111,
+          "si_er": 356
+        },
+        "shared_assignment_counts": {
+          "ks_si": 384,
+          "ks_er": 971,
+          "si_er": 249
+        },
+        "independent_rows": 396,
+        "frozen_epoch": 4,
+        "freeze_reason": "assignment stability reached",
+        "sharing_coefficient_statistics": {
+          "mean": 0.5481739044189453,
+          "median": 0.5841282606124878,
+          "std": 0.4097910225391388,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cluster_summary": {
+          "task_type": "ks_si_er",
+          "sharing_granularity": "row",
+          "strategy": "closest_pair",
+          "row_warmup_mode": "adaptive",
+          "frozen": true,
+          "frozen_epoch": 4,
+          "freeze_reason": "assignment stability reached",
+          "row_pair_counts": {
+            "ks_si": 533,
+            "ks_er": 1111,
+            "si_er": 356
+          },
+          "shared_row_pair_counts": {
+            "ks_si": 384,
+            "ks_er": 971,
+            "si_er": 249
+          },
+          "independent_rows": 396,
+          "minimum_relative_margin": 0.0,
+          "row_sharing_mode": "soft",
+          "soft_min_margin": 0.05,
+          "soft_full_margin": 0.2,
+          "sharing_coefficient_statistics": {
+            "mean": 0.5481739044189453,
+            "median": 0.5841282606124878,
+            "std": 0.4097910225391388,
+            "min": 0.0,
+            "max": 1.0
+          }
+        },
+        "warmup_summary": {
+          "mode": "adaptive",
+          "minimum_epochs": 3,
+          "maximum_epochs": 10,
+          "stability_threshold": 0.9,
+          "stability_patience": 2,
+          "actual_warmup_epochs": 4,
+          "freeze_reason": "assignment stability reached",
+          "final_stability_rate": 0.95,
+          "final_stable_transition_count": 2
+        },
+        "assignment_stability": {
+          "source_file": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27/row_pair_assignment_stability.csv",
+          "observations": 26,
+          "columns": [
+            "epoch",
+            "rows",
+            "matching_frozen_assignment",
+            "match_rate",
+            "observed_ks_si",
+            "observed_ks_er",
+            "observed_si_er"
+          ],
+          "final_observation": {
+            "epoch": "30",
+            "rows": "2000",
+            "matching_frozen_assignment": "1770",
+            "match_rate": "0.885",
+            "observed_ks_si": "665",
+            "observed_ks_er": "1086",
+            "observed_si_er": "249"
+          },
+          "match_rate_mean": 0.8978653846153846,
+          "match_rate_min": 0.885,
+          "match_rate_max": 0.9485,
+          "match_rate_final": 0.885
+        }
+      },
+      "optimization_stability": {
+        "completed_epochs": 30,
+        "optimization_stable": true,
+        "stability_rule": "No non-finite loss and no train/validation loss above 100 after epoch 5.",
+        "first_instability_epoch": null,
+        "peak_train_loss": 10.6607,
+        "peak_train_loss_epoch": 1,
+        "peak_validation_loss": 0.9657,
+        "peak_validation_loss_epoch": 1,
+        "stability_status": "stable"
+      },
+      "selection_eligible": true,
+      "selection_note": "Completed 30 epochs without non-finite values or late loss explosion.",
+      "parameter_and_compute_accounting": {
+        "selected_layer_count": 25,
+        "dropped_layer_count": 0,
+        "trainable_downstream_parameters": 16086068,
+        "parameter_reduction_vs_all_layer_ncmtl_count": 0,
+        "parameter_reduction_vs_all_layer_ncmtl_percent": 0.0,
+        "parameter_delta_vs_original_wavcse_downstream_count": 12000001,
+        "parameter_change_vs_original_wavcse_downstream_percent": 293.68096509430706,
+        "candidate_layer_parameters": 12000000,
+        "auto_pooling_parameters": 1,
+        "input_embedding_elements_per_sample": 25600,
+        "input_element_reduction_vs_all_count": 0,
+        "input_element_reduction_vs_all_percent": 0.0,
+        "projector_macs_removed_per_sample_vs_all": 0,
+        "upstream_encoder_parameters_removed": 0,
+        "interpretation": "Layer selection reduces cached representation rows and pooling/projector work, but not trainable parameter count or WavLM encoder parameters in this implementation."
+      }
+    },
+    {
+      "run_id": "run_2026_10_04_16_40_28",
+      "method": "bottom_layer_dropping",
+      "method_display_name": "Bottom-layer dropping",
+      "variant": "k=2",
+      "k_dropped": 2,
+      "selected_layers": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "removed_layers": [
+        0,
+        1
+      ],
+      "selected_layer_count": 23,
+      "source": {
+        "log_file": "improvements/clustering/logs/epoch30/layer_reduction/bottom_layer_dropping/run_2026_10_04_16_40_28.log",
+        "result_directory": "improvements/clustering/results_ncmtl_soft_bottom_layers_k2_seed42/2026_10_04_16_40_33",
+        "config_file": "improvements/clustering/configs/layer_reduction/bottom_layer_dropping/soft_bottom_layers_k2_seed42.yml"
+      },
+      "configuration": {
+        "task_type": "ks_si_er",
+        "epochs": 30,
+        "seed": 42,
+        "pooling": "auto 0.01",
+        "candidate_dim": 2000,
+        "label_smoothing": 0.1,
+        "sharing_mode": "row_soft_margin"
+      },
+      "validation": {
+        "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k2_seed42/2026_10_04_16_40_33/train_ks_si_er.txt",
+        "completed_epochs": 30,
+        "best": {
+          "selection_metric": "validation_accuracy_all",
+          "epoch": 17,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.962189,
+          "loss_all": 0.2424,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.982495,
+              "loss": 0.1746
+            },
+            "si": {
+              "accuracy": 0.964224,
+              "loss": 0.5191
+            },
+            "er": {
+              "accuracy": 0.687161,
+              "loss": 0.7991
+            }
+          },
+          "macro_task_accuracy": 0.87796
+        },
+        "opt": {
+          "selection_metric": "validation_macro_task_accuracy",
+          "epoch": 12,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.956086,
+          "loss_all": 0.2517,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.979553,
+              "loss": 0.1709
+            },
+            "si": {
+              "accuracy": 0.948725,
+              "loss": 0.5763
+            },
+            "er": {
+              "accuracy": 0.759494,
+              "loss": 0.7005
+            }
+          },
+          "macro_task_accuracy": 0.895924
+        }
+      },
+      "test": {
+        "opt": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k2_seed42/2026_10_04_16_40_33/eval_metrics_opt.txt",
+          "loss_all": 0.180583,
+          "accuracy_all": 0.959652,
+          "tasks": {
+            "ks": {
+              "loss": 0.166705,
+              "accuracy": 0.984053,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.588035,
+              "accuracy": 0.955399,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.727011,
+              "accuracy": 0.721519,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8869903333333333
+        },
+        "best": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k2_seed42/2026_10_04_16_40_33/eval_metrics_best.txt",
+          "loss_all": 0.174088,
+          "accuracy_all": 0.962721,
+          "tasks": {
+            "ks": {
+              "loss": 0.167702,
+              "accuracy": 0.985808,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.533159,
+              "accuracy": 0.962792,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.841516,
+              "accuracy": 0.676311,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8749703333333333
+        },
+        "epoch": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k2_seed42/2026_10_04_16_40_33/eval_metrics_epoch.txt",
+          "loss_all": 0.703445,
+          "accuracy_all": 0.865656,
+          "tasks": {
+            "ks": {
+              "loss": 0.241071,
+              "accuracy": 0.975274,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 3.038598,
+              "accuracy": 0.785238,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.725397,
+              "accuracy": 0.710669,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.823727
+        }
+      },
+      "row_sharing": {
+        "assignment_counts": {
+          "ks_si": 513,
+          "ks_er": 1055,
+          "si_er": 432
+        },
+        "shared_assignment_counts": {
+          "ks_si": 366,
+          "ks_er": 901,
+          "si_er": 319
+        },
+        "independent_rows": 414,
+        "frozen_epoch": 4,
+        "freeze_reason": "assignment stability reached",
+        "sharing_coefficient_statistics": {
+          "mean": 0.5548415780067444,
+          "median": 0.6160274147987366,
+          "std": 0.4153558015823364,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cluster_summary": {
+          "task_type": "ks_si_er",
+          "sharing_granularity": "row",
+          "strategy": "closest_pair",
+          "row_warmup_mode": "adaptive",
+          "frozen": true,
+          "frozen_epoch": 4,
+          "freeze_reason": "assignment stability reached",
+          "row_pair_counts": {
+            "ks_si": 513,
+            "ks_er": 1055,
+            "si_er": 432
+          },
+          "shared_row_pair_counts": {
+            "ks_si": 366,
+            "ks_er": 901,
+            "si_er": 319
+          },
+          "independent_rows": 414,
+          "minimum_relative_margin": 0.0,
+          "row_sharing_mode": "soft",
+          "soft_min_margin": 0.05,
+          "soft_full_margin": 0.2,
+          "sharing_coefficient_statistics": {
+            "mean": 0.5548415780067444,
+            "median": 0.6160274147987366,
+            "std": 0.4153558015823364,
+            "min": 0.0,
+            "max": 1.0
+          }
+        },
+        "warmup_summary": {
+          "mode": "adaptive",
+          "minimum_epochs": 3,
+          "maximum_epochs": 10,
+          "stability_threshold": 0.9,
+          "stability_patience": 2,
+          "actual_warmup_epochs": 4,
+          "freeze_reason": "assignment stability reached",
+          "final_stability_rate": 0.9545,
+          "final_stable_transition_count": 2
+        },
+        "assignment_stability": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k2_seed42/2026_10_04_16_40_33/row_pair_assignment_stability.csv",
+          "observations": 26,
+          "columns": [
+            "epoch",
+            "rows",
+            "matching_frozen_assignment",
+            "match_rate",
+            "observed_ks_si",
+            "observed_ks_er",
+            "observed_si_er"
+          ],
+          "final_observation": {
+            "epoch": "30",
+            "rows": "2000",
+            "matching_frozen_assignment": "1727",
+            "match_rate": "0.8635",
+            "observed_ks_si": "589",
+            "observed_ks_er": "988",
+            "observed_si_er": "423"
+          },
+          "match_rate_mean": 0.8925384615384615,
+          "match_rate_min": 0.858,
+          "match_rate_max": 0.9585,
+          "match_rate_final": 0.8635
+        }
+      },
+      "optimization_stability": {
+        "completed_epochs": 30,
+        "optimization_stable": false,
+        "stability_rule": "No non-finite loss and no train/validation loss above 100 after epoch 5.",
+        "first_instability_epoch": 22,
+        "peak_train_loss": 1272.0236,
+        "peak_train_loss_epoch": 23,
+        "peak_validation_loss": 1046.4964,
+        "peak_validation_loss_epoch": 22,
+        "stability_status": "late_training_loss_explosion"
+      },
+      "selection_eligible": false,
+      "selection_note": "Excluded from recommendation: loss explosion began at epoch 22.",
+      "parameter_and_compute_accounting": {
+        "selected_layer_count": 23,
+        "dropped_layer_count": 2,
+        "trainable_downstream_parameters": 16086068,
+        "parameter_reduction_vs_all_layer_ncmtl_count": 0,
+        "parameter_reduction_vs_all_layer_ncmtl_percent": 0.0,
+        "parameter_delta_vs_original_wavcse_downstream_count": 12000001,
+        "parameter_change_vs_original_wavcse_downstream_percent": 293.68096509430706,
+        "candidate_layer_parameters": 12000000,
+        "auto_pooling_parameters": 1,
+        "input_embedding_elements_per_sample": 23552,
+        "input_element_reduction_vs_all_count": 2048,
+        "input_element_reduction_vs_all_percent": 8.0,
+        "projector_macs_removed_per_sample_vs_all": 1048576,
+        "upstream_encoder_parameters_removed": 0,
+        "interpretation": "Layer selection reduces cached representation rows and pooling/projector work, but not trainable parameter count or WavLM encoder parameters in this implementation."
+      }
+    },
+    {
+      "run_id": "run_2026_10_04_17_36_41",
+      "method": "bottom_layer_dropping",
+      "method_display_name": "Bottom-layer dropping",
+      "variant": "k=4",
+      "k_dropped": 4,
+      "selected_layers": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "removed_layers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "selected_layer_count": 21,
+      "source": {
+        "log_file": "improvements/clustering/logs/epoch30/layer_reduction/bottom_layer_dropping/run_2026_10_04_17_36_41.log",
+        "result_directory": "improvements/clustering/results_ncmtl_soft_bottom_layers_k4_seed42/2026_10_04_17_36_46",
+        "config_file": "improvements/clustering/configs/layer_reduction/bottom_layer_dropping/soft_bottom_layers_k4_seed42.yml"
+      },
+      "configuration": {
+        "task_type": "ks_si_er",
+        "epochs": 30,
+        "seed": 42,
+        "pooling": "auto 0.01",
+        "candidate_dim": 2000,
+        "label_smoothing": 0.1,
+        "sharing_mode": "row_soft_margin"
+      },
+      "validation": {
+        "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k4_seed42/2026_10_04_17_36_46/train_ks_si_er.txt",
+        "completed_epochs": 30,
+        "best": {
+          "selection_metric": "validation_accuracy_all",
+          "epoch": 17,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.96268,
+          "loss_all": 0.2347,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.982642,
+              "loss": 0.1618
+            },
+            "si": {
+              "accuracy": 0.961761,
+              "loss": 0.5082
+            },
+            "er": {
+              "accuracy": 0.728752,
+              "loss": 0.761
+            }
+          },
+          "macro_task_accuracy": 0.8910516666666667
+        },
+        "opt": {
+          "selection_metric": "validation_macro_task_accuracy",
+          "epoch": 15,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.959453,
+          "loss_all": 0.2335,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.979553,
+              "loss": 0.1584
+            },
+            "si": {
+              "accuracy": 0.956547,
+              "loss": 0.525
+            },
+            "er": {
+              "accuracy": 0.748644,
+              "loss": 0.665
+            }
+          },
+          "macro_task_accuracy": 0.8949146666666666
+        }
+      },
+      "test": {
+        "opt": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k4_seed42/2026_10_04_17_36_46/eval_metrics_opt.txt",
+          "loss_all": 0.166514,
+          "accuracy_all": 0.96253,
+          "tasks": {
+            "ks": {
+              "loss": 0.151009,
+              "accuracy": 0.984931,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.541672,
+              "accuracy": 0.958793,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.68395,
+              "accuracy": 0.74141,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8950446666666667
+        },
+        "best": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k4_seed42/2026_10_04_17_36_46/eval_metrics_best.txt",
+          "loss_all": 0.16727,
+          "accuracy_all": 0.963681,
+          "tasks": {
+            "ks": {
+              "loss": 0.15392,
+              "accuracy": 0.985808,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.524841,
+              "accuracy": 0.962671,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.774599,
+              "accuracy": 0.705244,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8845743333333334
+        },
+        "epoch": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k4_seed42/2026_10_04_17_36_46/eval_metrics_epoch.txt",
+          "loss_all": 0.478469,
+          "accuracy_all": 0.896924,
+          "tasks": {
+            "ks": {
+              "loss": 0.386279,
+              "accuracy": 0.97147,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 1.844775,
+              "accuracy": 0.847897,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.71427,
+              "accuracy": 0.707052,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8421396666666666
+        }
+      },
+      "row_sharing": {
+        "assignment_counts": {
+          "ks_si": 531,
+          "ks_er": 1036,
+          "si_er": 433
+        },
+        "shared_assignment_counts": {
+          "ks_si": 399,
+          "ks_er": 884,
+          "si_er": 323
+        },
+        "independent_rows": 394,
+        "frozen_epoch": 4,
+        "freeze_reason": "assignment stability reached",
+        "sharing_coefficient_statistics": {
+          "mean": 0.5348387956619263,
+          "median": 0.5435757637023926,
+          "std": 0.40888676047325134,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cluster_summary": {
+          "task_type": "ks_si_er",
+          "sharing_granularity": "row",
+          "strategy": "closest_pair",
+          "row_warmup_mode": "adaptive",
+          "frozen": true,
+          "frozen_epoch": 4,
+          "freeze_reason": "assignment stability reached",
+          "row_pair_counts": {
+            "ks_si": 531,
+            "ks_er": 1036,
+            "si_er": 433
+          },
+          "shared_row_pair_counts": {
+            "ks_si": 399,
+            "ks_er": 884,
+            "si_er": 323
+          },
+          "independent_rows": 394,
+          "minimum_relative_margin": 0.0,
+          "row_sharing_mode": "soft",
+          "soft_min_margin": 0.05,
+          "soft_full_margin": 0.2,
+          "sharing_coefficient_statistics": {
+            "mean": 0.5348387956619263,
+            "median": 0.5435757637023926,
+            "std": 0.40888676047325134,
+            "min": 0.0,
+            "max": 1.0
+          }
+        },
+        "warmup_summary": {
+          "mode": "adaptive",
+          "minimum_epochs": 3,
+          "maximum_epochs": 10,
+          "stability_threshold": 0.9,
+          "stability_patience": 2,
+          "actual_warmup_epochs": 4,
+          "freeze_reason": "assignment stability reached",
+          "final_stability_rate": 0.9635,
+          "final_stable_transition_count": 2
+        },
+        "assignment_stability": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k4_seed42/2026_10_04_17_36_46/row_pair_assignment_stability.csv",
+          "observations": 26,
+          "columns": [
+            "epoch",
+            "rows",
+            "matching_frozen_assignment",
+            "match_rate",
+            "observed_ks_si",
+            "observed_ks_er",
+            "observed_si_er"
+          ],
+          "final_observation": {
+            "epoch": "30",
+            "rows": "2000",
+            "matching_frozen_assignment": "1753",
+            "match_rate": "0.8765",
+            "observed_ks_si": "635",
+            "observed_ks_er": "945",
+            "observed_si_er": "420"
+          },
+          "match_rate_mean": 0.8973846153846153,
+          "match_rate_min": 0.8615,
+          "match_rate_max": 0.9595,
+          "match_rate_final": 0.8765
+        }
+      },
+      "optimization_stability": {
+        "completed_epochs": 30,
+        "optimization_stable": false,
+        "stability_rule": "No non-finite loss and no train/validation loss above 100 after epoch 5.",
+        "first_instability_epoch": 22,
+        "peak_train_loss": 1362.1219,
+        "peak_train_loss_epoch": 22,
+        "peak_validation_loss": 1242.8215,
+        "peak_validation_loss_epoch": 22,
+        "stability_status": "late_training_loss_explosion"
+      },
+      "selection_eligible": false,
+      "selection_note": "Excluded from recommendation: loss explosion began at epoch 22.",
+      "parameter_and_compute_accounting": {
+        "selected_layer_count": 21,
+        "dropped_layer_count": 4,
+        "trainable_downstream_parameters": 16086068,
+        "parameter_reduction_vs_all_layer_ncmtl_count": 0,
+        "parameter_reduction_vs_all_layer_ncmtl_percent": 0.0,
+        "parameter_delta_vs_original_wavcse_downstream_count": 12000001,
+        "parameter_change_vs_original_wavcse_downstream_percent": 293.68096509430706,
+        "candidate_layer_parameters": 12000000,
+        "auto_pooling_parameters": 1,
+        "input_embedding_elements_per_sample": 21504,
+        "input_element_reduction_vs_all_count": 4096,
+        "input_element_reduction_vs_all_percent": 16.0,
+        "projector_macs_removed_per_sample_vs_all": 2097152,
+        "upstream_encoder_parameters_removed": 0,
+        "interpretation": "Layer selection reduces cached representation rows and pooling/projector work, but not trainable parameter count or WavLM encoder parameters in this implementation."
+      }
+    },
+    {
+      "run_id": "run_2026_10_04_18_36_08",
+      "method": "bottom_layer_dropping",
+      "method_display_name": "Bottom-layer dropping",
+      "variant": "k=6",
+      "k_dropped": 6,
+      "selected_layers": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "removed_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selected_layer_count": 19,
+      "source": {
+        "log_file": "improvements/clustering/logs/epoch30/layer_reduction/bottom_layer_dropping/run_2026_10_04_18_36_08.log",
+        "result_directory": "improvements/clustering/results_ncmtl_soft_bottom_layers_k6_seed42/2026_10_04_18_36_21",
+        "config_file": "improvements/clustering/configs/layer_reduction/bottom_layer_dropping/soft_bottom_layers_k6_seed42.yml"
+      },
+      "configuration": {
+        "task_type": "ks_si_er",
+        "epochs": 30,
+        "seed": 42,
+        "pooling": "auto 0.01",
+        "candidate_dim": 2000,
+        "label_smoothing": 0.1,
+        "sharing_mode": "row_soft_margin"
+      },
+      "validation": {
+        "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k6_seed42/2026_10_04_18_36_21/train_ks_si_er.txt",
+        "completed_epochs": 30,
+        "best": {
+          "selection_metric": "validation_accuracy_all",
+          "epoch": 16,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.961487,
+          "loss_all": 0.2353,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.978523,
+              "loss": 0.1687
+            },
+            "si": {
+              "accuracy": 0.960892,
+              "loss": 0.519
+            },
+            "er": {
+              "accuracy": 0.759494,
+              "loss": 0.6506
+            }
+          },
+          "macro_task_accuracy": 0.8996363333333334
+        },
+        "opt": {
+          "selection_metric": "validation_macro_task_accuracy",
+          "epoch": 16,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.961487,
+          "loss_all": 0.2353,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.978523,
+              "loss": 0.1687
+            },
+            "si": {
+              "accuracy": 0.960892,
+              "loss": 0.519
+            },
+            "er": {
+              "accuracy": 0.759494,
+              "loss": 0.6506
+            }
+          },
+          "macro_task_accuracy": 0.8996363333333334
+        }
+      },
+      "test": {
+        "opt": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k6_seed42/2026_10_04_18_36_21/eval_metrics_opt.txt",
+          "loss_all": 0.16316,
+          "accuracy_all": 0.965727,
+          "tasks": {
+            "ks": {
+              "loss": 0.160565,
+              "accuracy": 0.984931,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.523068,
+              "accuracy": 0.963762,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.658239,
+              "accuracy": 0.757685,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.902126
+        },
+        "best": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k6_seed42/2026_10_04_18_36_21/eval_metrics_best.txt",
+          "loss_all": 0.16316,
+          "accuracy_all": 0.965727,
+          "tasks": {
+            "ks": {
+              "loss": 0.160565,
+              "accuracy": 0.984931,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.523068,
+              "accuracy": 0.963762,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.658239,
+              "accuracy": 0.757685,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.902126
+        },
+        "epoch": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k6_seed42/2026_10_04_18_36_21/eval_metrics_epoch.txt",
+          "loss_all": 0.715759,
+          "accuracy_all": 0.889571,
+          "tasks": {
+            "ks": {
+              "loss": 0.46871,
+              "accuracy": 0.972933,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 2.857751,
+              "accuracy": 0.830445,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 1.014625,
+              "accuracy": 0.74141,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8482626666666667
+        }
+      },
+      "row_sharing": {
+        "assignment_counts": {
+          "ks_si": 620,
+          "ks_er": 922,
+          "si_er": 458
+        },
+        "shared_assignment_counts": {
+          "ks_si": 462,
+          "ks_er": 789,
+          "si_er": 342
+        },
+        "independent_rows": 407,
+        "frozen_epoch": 4,
+        "freeze_reason": "assignment stability reached",
+        "sharing_coefficient_statistics": {
+          "mean": 0.5399839878082275,
+          "median": 0.5705939531326294,
+          "std": 0.4124883711338043,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cluster_summary": {
+          "task_type": "ks_si_er",
+          "sharing_granularity": "row",
+          "strategy": "closest_pair",
+          "row_warmup_mode": "adaptive",
+          "frozen": true,
+          "frozen_epoch": 4,
+          "freeze_reason": "assignment stability reached",
+          "row_pair_counts": {
+            "ks_si": 620,
+            "ks_er": 922,
+            "si_er": 458
+          },
+          "shared_row_pair_counts": {
+            "ks_si": 462,
+            "ks_er": 789,
+            "si_er": 342
+          },
+          "independent_rows": 407,
+          "minimum_relative_margin": 0.0,
+          "row_sharing_mode": "soft",
+          "soft_min_margin": 0.05,
+          "soft_full_margin": 0.2,
+          "sharing_coefficient_statistics": {
+            "mean": 0.5399839878082275,
+            "median": 0.5705939531326294,
+            "std": 0.4124883711338043,
+            "min": 0.0,
+            "max": 1.0
+          }
+        },
+        "warmup_summary": {
+          "mode": "adaptive",
+          "minimum_epochs": 3,
+          "maximum_epochs": 10,
+          "stability_threshold": 0.9,
+          "stability_patience": 2,
+          "actual_warmup_epochs": 4,
+          "freeze_reason": "assignment stability reached",
+          "final_stability_rate": 0.9585,
+          "final_stable_transition_count": 2
+        },
+        "assignment_stability": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k6_seed42/2026_10_04_18_36_21/row_pair_assignment_stability.csv",
+          "observations": 26,
+          "columns": [
+            "epoch",
+            "rows",
+            "matching_frozen_assignment",
+            "match_rate",
+            "observed_ks_si",
+            "observed_ks_er",
+            "observed_si_er"
+          ],
+          "final_observation": {
+            "epoch": "30",
+            "rows": "2000",
+            "matching_frozen_assignment": "1756",
+            "match_rate": "0.878",
+            "observed_ks_si": "643",
+            "observed_ks_er": "914",
+            "observed_si_er": "443"
+          },
+          "match_rate_mean": 0.896,
+          "match_rate_min": 0.863,
+          "match_rate_max": 0.953,
+          "match_rate_final": 0.878
+        }
+      },
+      "optimization_stability": {
+        "completed_epochs": 30,
+        "optimization_stable": false,
+        "stability_rule": "No non-finite loss and no train/validation loss above 100 after epoch 5.",
+        "first_instability_epoch": 22,
+        "peak_train_loss": 2333.864,
+        "peak_train_loss_epoch": 22,
+        "peak_validation_loss": 583.2791,
+        "peak_validation_loss_epoch": 22,
+        "stability_status": "late_training_loss_explosion"
+      },
+      "selection_eligible": false,
+      "selection_note": "Excluded from recommendation: loss explosion began at epoch 22.",
+      "parameter_and_compute_accounting": {
+        "selected_layer_count": 19,
+        "dropped_layer_count": 6,
+        "trainable_downstream_parameters": 16086068,
+        "parameter_reduction_vs_all_layer_ncmtl_count": 0,
+        "parameter_reduction_vs_all_layer_ncmtl_percent": 0.0,
+        "parameter_delta_vs_original_wavcse_downstream_count": 12000001,
+        "parameter_change_vs_original_wavcse_downstream_percent": 293.68096509430706,
+        "candidate_layer_parameters": 12000000,
+        "auto_pooling_parameters": 1,
+        "input_embedding_elements_per_sample": 19456,
+        "input_element_reduction_vs_all_count": 6144,
+        "input_element_reduction_vs_all_percent": 24.0,
+        "projector_macs_removed_per_sample_vs_all": 3145728,
+        "upstream_encoder_parameters_removed": 0,
+        "interpretation": "Layer selection reduces cached representation rows and pooling/projector work, but not trainable parameter count or WavLM encoder parameters in this implementation."
+      }
+    },
+    {
+      "run_id": "run_2026_10_04_19_33_50",
+      "method": "bottom_layer_dropping",
+      "method_display_name": "Bottom-layer dropping",
+      "variant": "k=8",
+      "k_dropped": 8,
+      "selected_layers": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "removed_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "selected_layer_count": 17,
+      "source": {
+        "log_file": "improvements/clustering/logs/epoch30/layer_reduction/bottom_layer_dropping/run_2026_10_04_19_33_50.log",
+        "result_directory": "improvements/clustering/results_ncmtl_soft_bottom_layers_k8_seed42/2026_10_04_19_34_01",
+        "config_file": "improvements/clustering/configs/layer_reduction/bottom_layer_dropping/soft_bottom_layers_k8_seed42.yml"
+      },
+      "configuration": {
+        "task_type": "ks_si_er",
+        "epochs": 30,
+        "seed": 42,
+        "pooling": "auto 0.01",
+        "candidate_dim": 2000,
+        "label_smoothing": 0.1,
+        "sharing_mode": "row_soft_margin"
+      },
+      "validation": {
+        "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k8_seed42/2026_10_04_19_34_01/train_ks_si_er.txt",
+        "completed_epochs": 30,
+        "best": {
+          "selection_metric": "validation_accuracy_all",
+          "epoch": 20,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.959172,
+          "loss_all": 0.2322,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.979406,
+              "loss": 0.1577
+            },
+            "si": {
+              "accuracy": 0.955243,
+              "loss": 0.5221
+            },
+            "er": {
+              "accuracy": 0.759494,
+              "loss": 0.6143
+            }
+          },
+          "macro_task_accuracy": 0.8980476666666667
+        },
+        "opt": {
+          "selection_metric": "validation_macro_task_accuracy",
+          "epoch": 20,
+          "epoch_source": "inferred_from_rounded_epoch_metrics",
+          "accuracy_all": 0.959172,
+          "loss_all": 0.2322,
+          "tasks": {
+            "ks": {
+              "accuracy": 0.979406,
+              "loss": 0.1577
+            },
+            "si": {
+              "accuracy": 0.955243,
+              "loss": 0.5221
+            },
+            "er": {
+              "accuracy": 0.759494,
+              "loss": 0.6143
+            }
+          },
+          "macro_task_accuracy": 0.8980476666666667
+        }
+      },
+      "test": {
+        "opt": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k8_seed42/2026_10_04_19_34_01/eval_metrics_opt.txt",
+          "loss_all": 0.165823,
+          "accuracy_all": 0.959652,
+          "tasks": {
+            "ks": {
+              "loss": 0.151806,
+              "accuracy": 0.984784,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.532284,
+              "accuracy": 0.955278,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.711107,
+              "accuracy": 0.714286,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8847826666666666
+        },
+        "best": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k8_seed42/2026_10_04_19_34_01/eval_metrics_best.txt",
+          "loss_all": 0.165823,
+          "accuracy_all": 0.959652,
+          "tasks": {
+            "ks": {
+              "loss": 0.151806,
+              "accuracy": 0.984784,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 0.532284,
+              "accuracy": 0.955278,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.711107,
+              "accuracy": 0.714286,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8847826666666666
+        },
+        "epoch": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k8_seed42/2026_10_04_19_34_01/eval_metrics_epoch.txt",
+          "loss_all": 0.876042,
+          "accuracy_all": 0.880043,
+          "tasks": {
+            "ks": {
+              "loss": 0.933804,
+              "accuracy": 0.979663,
+              "samples": 6835
+            },
+            "si": {
+              "loss": 3.272082,
+              "accuracy": 0.807781,
+              "samples": 8251
+            },
+            "er": {
+              "loss": 0.929375,
+              "accuracy": 0.726944,
+              "samples": 553
+            }
+          },
+          "macro_task_accuracy": 0.8381293333333333
+        }
+      },
+      "row_sharing": {
+        "assignment_counts": {
+          "ks_si": 639,
+          "ks_er": 864,
+          "si_er": 497
+        },
+        "shared_assignment_counts": {
+          "ks_si": 489,
+          "ks_er": 721,
+          "si_er": 376
+        },
+        "independent_rows": 414,
+        "frozen_epoch": 4,
+        "freeze_reason": "assignment stability reached",
+        "sharing_coefficient_statistics": {
+          "mean": 0.5289731025695801,
+          "median": 0.5411652326583862,
+          "std": 0.40762007236480713,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cluster_summary": {
+          "task_type": "ks_si_er",
+          "sharing_granularity": "row",
+          "strategy": "closest_pair",
+          "row_warmup_mode": "adaptive",
+          "frozen": true,
+          "frozen_epoch": 4,
+          "freeze_reason": "assignment stability reached",
+          "row_pair_counts": {
+            "ks_si": 639,
+            "ks_er": 864,
+            "si_er": 497
+          },
+          "shared_row_pair_counts": {
+            "ks_si": 489,
+            "ks_er": 721,
+            "si_er": 376
+          },
+          "independent_rows": 414,
+          "minimum_relative_margin": 0.0,
+          "row_sharing_mode": "soft",
+          "soft_min_margin": 0.05,
+          "soft_full_margin": 0.2,
+          "sharing_coefficient_statistics": {
+            "mean": 0.5289731025695801,
+            "median": 0.5411652326583862,
+            "std": 0.40762007236480713,
+            "min": 0.0,
+            "max": 1.0
+          }
+        },
+        "warmup_summary": {
+          "mode": "adaptive",
+          "minimum_epochs": 3,
+          "maximum_epochs": 10,
+          "stability_threshold": 0.9,
+          "stability_patience": 2,
+          "actual_warmup_epochs": 4,
+          "freeze_reason": "assignment stability reached",
+          "final_stability_rate": 0.9715,
+          "final_stable_transition_count": 2
+        },
+        "assignment_stability": {
+          "source_file": "improvements/clustering/results_ncmtl_soft_bottom_layers_k8_seed42/2026_10_04_19_34_01/row_pair_assignment_stability.csv",
+          "observations": 26,
+          "columns": [
+            "epoch",
+            "rows",
+            "matching_frozen_assignment",
+            "match_rate",
+            "observed_ks_si",
+            "observed_ks_er",
+            "observed_si_er"
+          ],
+          "final_observation": {
+            "epoch": "30",
+            "rows": "2000",
+            "matching_frozen_assignment": "1723",
+            "match_rate": "0.8615",
+            "observed_ks_si": "718",
+            "observed_ks_er": "791",
+            "observed_si_er": "491"
+          },
+          "match_rate_mean": 0.8899615384615385,
+          "match_rate_min": 0.8615,
+          "match_rate_max": 0.9565,
+          "match_rate_final": 0.8615
+        }
+      },
+      "optimization_stability": {
+        "completed_epochs": 30,
+        "optimization_stable": false,
+        "stability_rule": "No non-finite loss and no train/validation loss above 100 after epoch 5.",
+        "first_instability_epoch": 23,
+        "peak_train_loss": 2568.3159,
+        "peak_train_loss_epoch": 23,
+        "peak_validation_loss": 194.2073,
+        "peak_validation_loss_epoch": 23,
+        "stability_status": "late_training_loss_explosion"
+      },
+      "selection_eligible": false,
+      "selection_note": "Excluded from recommendation: loss explosion began at epoch 23.",
+      "parameter_and_compute_accounting": {
+        "selected_layer_count": 17,
+        "dropped_layer_count": 8,
+        "trainable_downstream_parameters": 16086068,
+        "parameter_reduction_vs_all_layer_ncmtl_count": 0,
+        "parameter_reduction_vs_all_layer_ncmtl_percent": 0.0,
+        "parameter_delta_vs_original_wavcse_downstream_count": 12000001,
+        "parameter_change_vs_original_wavcse_downstream_percent": 293.68096509430706,
+        "candidate_layer_parameters": 12000000,
+        "auto_pooling_parameters": 1,
+        "input_embedding_elements_per_sample": 17408,
+        "input_element_reduction_vs_all_count": 8192,
+        "input_element_reduction_vs_all_percent": 32.0,
+        "projector_macs_removed_per_sample_vs_all": 4194304,
+        "upstream_encoder_parameters_removed": 0,
+        "interpretation": "Layer selection reduces cached representation rows and pooling/projector work, but not trainable parameter count or WavLM encoder parameters in this implementation."
+      }
+    }
+  ],
+  "ranking_by_validation_macro": [
+    {
+      "rank": 1,
+      "method": "top_layer_dropping",
+      "variant": "all",
+      "selected_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "validation_opt_epoch": 25,
+      "validation_macro_task_accuracy": 0.9198853333333333,
+      "validation_accuracy_all": 0.970747,
+      "test_opt_macro_task_accuracy": 0.9174483333333333,
+      "test_opt_accuracy_all": 0.97308,
+      "optimization_stable": true,
+      "selection_eligible": true
+    },
+    {
+      "rank": 2,
+      "method": "bottom_layer_dropping",
+      "variant": "k=6",
+      "selected_layers": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "validation_opt_epoch": 16,
+      "validation_macro_task_accuracy": 0.8996363333333334,
+      "validation_accuracy_all": 0.961487,
+      "test_opt_macro_task_accuracy": 0.902126,
+      "test_opt_accuracy_all": 0.965727,
+      "optimization_stable": false,
+      "selection_eligible": false
+    },
+    {
+      "rank": 3,
+      "method": "bottom_layer_dropping",
+      "variant": "k=8",
+      "selected_layers": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "validation_opt_epoch": 20,
+      "validation_macro_task_accuracy": 0.8980476666666667,
+      "validation_accuracy_all": 0.959172,
+      "test_opt_macro_task_accuracy": 0.8847826666666666,
+      "test_opt_accuracy_all": 0.959652,
+      "optimization_stable": false,
+      "selection_eligible": false
+    },
+    {
+      "rank": 4,
+      "method": "bottom_layer_dropping",
+      "variant": "k=2",
+      "selected_layers": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "validation_opt_epoch": 12,
+      "validation_macro_task_accuracy": 0.895924,
+      "validation_accuracy_all": 0.956086,
+      "test_opt_macro_task_accuracy": 0.8869903333333333,
+      "test_opt_accuracy_all": 0.959652,
+      "optimization_stable": false,
+      "selection_eligible": false
+    },
+    {
+      "rank": 5,
+      "method": "bottom_layer_dropping",
+      "variant": "k=4",
+      "selected_layers": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "validation_opt_epoch": 15,
+      "validation_macro_task_accuracy": 0.8949146666666666,
+      "validation_accuracy_all": 0.959453,
+      "test_opt_macro_task_accuracy": 0.8950446666666667,
+      "test_opt_accuracy_all": 0.96253,
+      "optimization_stable": false,
+      "selection_eligible": false
+    }
+  ],
+  "stable_only_ranking_by_validation_macro": [
+    {
+      "rank": 1,
+      "method": "top_layer_dropping",
+      "variant": "all",
+      "selected_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "validation_opt_epoch": 25,
+      "validation_macro_task_accuracy": 0.9198853333333333,
+      "validation_accuracy_all": 0.970747,
+      "test_opt_macro_task_accuracy": 0.9174483333333333,
+      "test_opt_accuracy_all": 0.97308,
+      "optimization_stable": true,
+      "selection_eligible": true
+    }
+  ],
+  "decision": {
+    "recommended_variant": "all",
+    "recommended_selected_layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "recommended_validation_macro_task_accuracy": 0.9198853333333333,
+    "recommended_test_macro_task_accuracy_reported_only": 0.9174483333333333,
+    "unstable_variants_excluded": [
+      "k=2",
+      "k=4",
+      "k=6",
+      "k=8"
+    ],
+    "reason": "Highest validation macro accuracy among numerically stable runs in this method comparison."
+  }
+}

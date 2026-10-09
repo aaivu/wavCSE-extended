@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "experiment": "Experiment 3: Adaptive Row-Level Task Sharing with Confidence Gating",
+  "training_epochs": 30,
+  "task_type": "ks_si_er",
+  "primary_selection_metric": "validation.opt.macro_task_accuracy",
+  "metric_policy": {
+    "macro_task_accuracy": "Arithmetic mean of KS, SI, and ER accuracies, weighted equally by task.",
+    "accuracy_all": "Sample-weighted accuracy across all labelled task examples.",
+    "test_usage": "Test values describe validation-selected checkpoints and were not used to select a method."
+  },
+  "common_configuration": {
+    "seeds": [42, 43, 44],
+    "pooling": {"frame": "mean", "layer": "auto", "init_alpha": 0.01},
+    "candidate_dimension": 2000,
+    "identical_candidate_initialization": true,
+    "shared_activation": "none",
+    "cluster_alpha": 0.001,
+    "label_smoothing": 0.1,
+    "batch_size": 2048,
+    "initial_learning_rate": 0.0025,
+    "gradient_clip_norm": null,
+    "adaptive_warmup": {
+      "minimum_epochs": 3,
+      "maximum_epochs": 10,
+      "stability_threshold": 0.9,
+      "stability_patience": 2
+    },
+    "variants": {
+      "adaptive_all_rows": "Freeze the closest pair for every row and hard-share all 2,000 rows.",
+      "adaptive_gated_0p10": "Hard-share only rows whose frozen relative distance margin is at least 10%; leave other rows independent."
+    }
+  },
+  "runs": {
+    "seed42": {
+      "adaptive_all_rows": {
+        "run_id": "2026_09_21_10_14_28",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/adaptive_all_seed42_run_2026_09_21_10_14_23.log",
+        "results": "improvements/clustering/results_ncmtl/2026_09_21_10_14_28",
+        "freeze": {"epoch": 4, "final_warmup_stability": 0.95, "pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_rows": 2000, "independent_rows": 0},
+        "validation_opt": {"epoch": 29, "accuracy_all": 0.972711, "macro_task_accuracy": 0.919029, "tasks": {"ks": 0.983230, "si": 0.976390, "er": 0.797468}},
+        "test_opt_descriptive_only": {"accuracy_all": 0.975510, "macro_task_accuracy": 0.914594, "tasks": {"ks": 0.986686, "si": 0.979518, "er": 0.777577}},
+        "late_loss_spike": false
+      },
+      "adaptive_gated_0p10": {
+        "run_id": "2026_09_21_10_42_23",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/adaptive_gated_0p10_seed42_run_2026_09_21_10_42_18.log",
+        "results": "improvements/clustering/results_ncmtl_row_confidence_0p10/2026_09_21_10_42_23",
+        "freeze": {"epoch": 4, "final_warmup_stability": 0.95, "pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_pair_counts": {"ks_si": 258, "ks_er": 830, "si_er": 156}, "shared_rows": 1244, "independent_rows": 756, "sharing_coverage": 0.6220},
+        "validation_opt": {"epoch": 30, "accuracy_all": 0.971168, "macro_task_accuracy": 0.916857, "tasks": {"ks": 0.982936, "si": 0.973783, "er": 0.793852}},
+        "test_opt_descriptive_only": {"accuracy_all": 0.973016, "macro_task_accuracy": 0.911860, "tasks": {"ks": 0.986101, "si": 0.975518, "er": 0.773960}},
+        "late_loss_spike": false
+      }
+    },
+    "seed43": {
+      "adaptive_all_rows": {
+        "run_id": "2026_09_21_12_22_05",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_21_59.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed43/2026_09_21_12_22_05",
+        "freeze": {"epoch": 4, "final_warmup_stability": 0.9515, "pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_rows": 2000, "independent_rows": 0},
+        "validation_opt": {"epoch": 29, "accuracy_all": 0.970116, "macro_task_accuracy": 0.915025, "tasks": {"ks": 0.983230, "si": 0.971611, "er": 0.790235}},
+        "test_opt_descriptive_only": {"accuracy_all": 0.973720, "macro_task_accuracy": 0.911188, "tasks": {"ks": 0.986247, "si": 0.976972, "er": 0.770344}},
+        "late_loss_spike": false
+      },
+      "adaptive_gated_0p10": {
+        "run_id": "2026_09_21_12_31_23",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_31_18.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed43/2026_09_21_12_31_23",
+        "freeze": {"epoch": 4, "final_warmup_stability": 0.9515, "pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_pair_counts": {"ks_si": 238, "ks_er": 836, "si_er": 75}, "shared_rows": 1149, "independent_rows": 851, "sharing_coverage": 0.5745},
+        "validation_opt": {"epoch": 13, "accuracy_all": 0.961557, "macro_task_accuracy": 0.900266, "tasks": {"ks": 0.983819, "si": 0.955678, "er": 0.761302}},
+        "test_opt_descriptive_only": {"accuracy_all": 0.959972, "macro_task_accuracy": 0.891271, "tasks": {"ks": 0.986540, "si": 0.953097, "er": 0.734177}},
+        "late_loss_spike": {"observed": true, "onset_epoch": 22, "train_loss_all_at_onset": 1001.9593, "val_loss_all_at_onset": 312.2299, "nan_observed": false}
+      }
+    },
+    "seed44": {
+      "adaptive_all_rows": {
+        "run_id": "2026_09_21_12_26_49",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_26_43.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed44/2026_09_21_12_26_49",
+        "freeze": {"epoch": 4, "final_warmup_stability": 0.9420, "pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_rows": 2000, "independent_rows": 0},
+        "validation_opt": {"epoch": 29, "accuracy_all": 0.971870, "macro_task_accuracy": 0.915132, "tasks": {"ks": 0.984996, "si": 0.973783, "er": 0.786618}},
+        "test_opt_descriptive_only": {"accuracy_all": 0.973400, "macro_task_accuracy": 0.913277, "tasks": {"ks": 0.986979, "si": 0.975276, "er": 0.777577}},
+        "late_loss_spike": false
+      },
+      "adaptive_gated_0p10": {
+        "run_id": "2026_09_21_12_43_29",
+        "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_43_23.log",
+        "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed44/2026_09_21_12_43_29",
+        "freeze": {"epoch": 4, "final_warmup_stability": 0.9420, "pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_pair_counts": {"ks_si": 105, "ks_er": 849, "si_er": 262}, "shared_rows": 1216, "independent_rows": 784, "sharing_coverage": 0.6080},
+        "validation_opt": {"epoch": 13, "accuracy_all": 0.960014, "macro_task_accuracy": 0.905845, "tasks": {"ks": 0.981318, "si": 0.953216, "er": 0.783002}},
+        "test_opt_descriptive_only": {"accuracy_all": 0.960292, "macro_task_accuracy": 0.898088, "tasks": {"ks": 0.984199, "si": 0.954187, "er": 0.755877}},
+        "late_loss_spike": {"observed": true, "onset_epoch": 23, "train_loss_all_at_onset": 834.1542, "val_loss_all_at_onset": 23.0769, "nan_observed": false}
+      }
+    }
+  },
+  "three_seed_aggregate": {
+    "adaptive_all_rows": {
+      "validation_opt": {
+        "accuracy_all": {"mean": 0.971566, "sample_standard_deviation": 0.001324},
+        "macro_task_accuracy": {"values": [0.919029, 0.915025, 0.915132], "mean": 0.916395, "sample_standard_deviation": 0.002281},
+        "tasks": {"ks_mean": 0.983819, "si_mean": 0.973928, "er_mean": 0.791440}
+      },
+      "test_opt_descriptive_only": {
+        "accuracy_all": {"mean": 0.974210, "sample_standard_deviation": 0.001137},
+        "macro_task_accuracy": {"values": [0.914594, 0.911188, 0.913277], "mean": 0.913020, "sample_standard_deviation": 0.001718},
+        "tasks": {"ks_mean": 0.986637, "si_mean": 0.977255, "er_mean": 0.775166}
+      }
+    },
+    "adaptive_gated_0p10": {
+      "validation_opt": {
+        "accuracy_all": {"mean": 0.964246, "sample_standard_deviation": 0.006044},
+        "macro_task_accuracy": {"values": [0.916857, 0.900266, 0.905845], "mean": 0.907656, "sample_standard_deviation": 0.008442},
+        "tasks": {"ks_mean": 0.982691, "si_mean": 0.960892, "er_mean": 0.779385}
+      },
+      "test_opt_descriptive_only": {
+        "accuracy_all": {"mean": 0.964427, "sample_standard_deviation": 0.007440},
+        "macro_task_accuracy": {"values": [0.911860, 0.891271, 0.898088], "mean": 0.900406, "sample_standard_deviation": 0.010488},
+        "tasks": {"ks_mean": 0.985613, "si_mean": 0.960934, "er_mean": 0.754671}
+      }
+    },
+    "paired_comparison": {
+      "validation_all_minus_gated_macro_by_seed": [0.002172, 0.014759, 0.009287],
+      "mean_validation_advantage_all_rows": 0.008739,
+      "all_rows_validation_wins": 3,
+      "mean_test_advantage_all_rows_descriptive_only": 0.012613
+    }
+  },
+  "observations": [
+    "All six runs froze after epoch 4; paired variants within each seed used identical proposed pair counts before confidence gating.",
+    "All-row hard sharing beat the 10% gated variant on validation macro accuracy for all three seeds.",
+    "All-row results were substantially more consistent across seeds: validation macro standard deviation 0.2281 percentage points versus 0.8442 for gating.",
+    "The 10% gate left 756, 851, and 784 rows independent for seeds 42, 43, and 44.",
+    "Gated seeds 43 and 44 experienced severe finite-loss spikes at epochs 22 and 23; their validation-opt checkpoints occurred at epoch 13, before instability.",
+    "The cause of the gated loss spikes was not established; no NaN was logged, so lack of gradient clipping is only a possible contributor rather than a confirmed explanation."
+  ],
+  "decision": {
+    "preferred_experiment3_variant": "adaptive_all_rows",
+    "reason": "It won every paired validation comparison, had a higher mean macro accuracy, and avoided the late loss spikes observed in two gated runs.",
+    "limitation": "The 100-epoch seed-42 gated run later outperformed all-row sharing, so training-budget and seed interactions remain unresolved.",
+    "combined_30_vs_100_summary": "improvements/clustering/logs/epoch100/3_adaptive_row_sharing/adaptive_row_30_vs_100_epoch_summary.json"
+  }
+}

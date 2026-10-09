@@ -1,21 +1,20 @@
-# NCMTL v1 configuration for KS, speaker ID, and emotion recognition.
-
+# Even-alternate layer-dropping experiment: drop WavLM Large layers 10, 12, 14, 16, 18, 20, 22, 24.
 log_level: INFO
-seed: 42  # improvements/seed_utils.py -- override here or with --seed for multi-seed runs
+seed: 42
 
 device:
   type: cuda
-  index: 0
+  index: 1
 
 paths:
   root_data_path: ~/voice_dataset
   root_emb_path: ~/dataset/embedding
-  results_root: results_ncmtl
-  checkpoints_root: checkpoints_ncmtl
+  results_root: results_ncmtl_soft_even_alternate_k8_seed42
+  checkpoints_root: checkpoints_ncmtl_soft_even_alternate_k8_seed42
 
 upstream:
   model_type: wavlm_large
-  selected_transformer_layers: all
+  selected_transformer_layers: "0,1,2,3,4,5,6,7,8,9,11,13,15,17,19,21,23"
 
 dataset:
   subset_percentage: 100
@@ -41,14 +40,19 @@ ncmtl:
   identical_candidate_initialization: true
   log_candidate_row_distances: true
 
-  cluster_every_n_batches: 5
-  warmup_epochs: 3
   row_warmup_mode: adaptive
   row_warmup_min_epochs: 3
   row_warmup_max_epochs: 10
   row_warmup_stability_threshold: 0.90
   row_warmup_stability_patience: 2
 
+  row_sharing_mode: soft
+  row_soft_min_margin: 0.05
+  row_soft_full_margin: 0.20
+  row_min_relative_margin: 0.0
+
+  cluster_every_n_batches: 5
+  warmup_epochs: 3
   kmeans_random_state: 42
   kmeans_n_init: 10
   kmeans_max_iter: 100
@@ -63,6 +67,7 @@ training:
   batch_size: 2048
   learning_rate: 0.0025
   label_smoothing: 0.1
+  gradient_clip_norm: null
   weight_decay: 0.00000005
   saved_checkpoint_count: 3
 
@@ -94,3 +99,4 @@ evaluation:
 mlflow:
   tracking_uri: https://dagshub.com/Ke-vin-S/wavCSE.mlflow
   experiment_name: wavcse-ncmtl
+

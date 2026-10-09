@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "experiment": {
+    "name": "NCMTL frozen row-sharing warm-up comparison",
+    "task_type": "ks_si_er",
+    "epochs": 30,
+    "seed": 42,
+    "primary_selection_metric": "validation.opt.macro_task_accuracy",
+    "selection_note": "Warm-up duration is selected using validation metrics. Test metrics are descriptive only.",
+    "fixed_settings": {
+      "sharing_granularity": "row",
+      "row_assignment_strategy": "closest_pair",
+      "pooling": {"type": "auto", "init_alpha": 0.01},
+      "shared_activation": "none",
+      "candidate_dim": 2000,
+      "identical_candidate_initialization": true,
+      "label_smoothing": 0.1,
+      "learning_rate": 0.0025,
+      "batch_size": 2048
+    }
+  },
+  "runs": {
+    "warmup_3": {
+      "run_id": "2026_09_21_07_14_51",
+      "warmup_epochs": 3,
+      "sharing_epochs": 27,
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_07_14_40.log",
+        "result_directory": "improvements/clustering/results_ncmtl/2026_09_21_07_14_51"
+      },
+      "assignments": {
+        "counts": {"ks_si": 563, "ks_er": 1032, "si_er": 405},
+        "proportions": {"ks_si": 0.2815, "ks_er": 0.5160, "si_er": 0.2025},
+        "mean_relative_margin": 0.158700,
+        "median_relative_margin": 0.133103,
+        "rows_below_0.10_margin": 770
+      },
+      "validation_opt": {
+        "epoch": 30,
+        "accuracy_all": 0.970887,
+        "macro_task_accuracy": 0.915008,
+        "tasks": {"ks": 0.984407, "si": 0.972190, "er": 0.788427}
+      },
+      "test_opt_descriptive_only": {
+        "accuracy_all": 0.970842,
+        "loss_all": 0.158511,
+        "macro_task_accuracy": 0.901480,
+        "tasks": {"ks": 0.985955, "si": 0.973458, "er": 0.745027}
+      }
+    },
+    "warmup_5": {
+      "run_id": "2026_09_21_08_06_10",
+      "warmup_epochs": 5,
+      "sharing_epochs": 25,
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/2_row_assignment/run_2026_09_21_08_06_00.log",
+        "result_directory": "improvements/clustering/results_ncmtl/2026_09_21_08_06_10"
+      },
+      "assignments": {
+        "counts": {"ks_si": 504, "ks_er": 1181, "si_er": 315},
+        "proportions": {"ks_si": 0.2520, "ks_er": 0.5905, "si_er": 0.1575},
+        "mean_relative_margin": 0.167663,
+        "median_relative_margin": 0.141322,
+        "rows_below_0.10_margin": 744,
+        "agreement_with_warmup_3": 0.9100
+      },
+      "natural_pre_sharing_stability": {
+        "epoch_1_to_2": 0.8520,
+        "epoch_2_to_3": 0.9405,
+        "epoch_3_to_4": 0.9500,
+        "epoch_4_to_5": 0.9585
+      },
+      "validation_opt": {
+        "epoch": 30,
+        "accuracy_all": 0.969414,
+        "macro_task_accuracy": 0.907883,
+        "tasks": {"ks": 0.982054, "si": 0.973059, "er": 0.768535}
+      },
+      "test_opt_descriptive_only": {
+        "accuracy_all": 0.972760,
+        "loss_all": 0.156423,
+        "macro_task_accuracy": 0.908332,
+        "tasks": {"ks": 0.986247, "si": 0.975639, "er": 0.763110}
+      }
+    }
+  },
+  "warmup_5_minus_warmup_3": {
+    "validation_opt": {
+      "accuracy_all": -0.001473,
+      "macro_task_accuracy": -0.007125,
+      "tasks": {"ks": -0.002353, "si": 0.000869, "er": -0.019892}
+    },
+    "test_opt_descriptive_only": {
+      "accuracy_all": 0.001918,
+      "loss_all": -0.002088,
+      "macro_task_accuracy": 0.006852,
+      "tasks": {"ks": 0.000292, "si": 0.002181, "er": 0.018083}
+    }
+  },
+  "matrix_reference": {
+    "run_id": "2026_09_21_05_30_35",
+    "validation_opt_accuracy_all": 0.971378,
+    "validation_opt_macro_task_accuracy": 0.917552,
+    "test_opt_accuracy_all_descriptive_only": 0.973464,
+    "test_opt_macro_task_accuracy_descriptive_only": 0.913259
+  },
+  "conclusion": {
+    "validation_selected_row_warmup": 3,
+    "overall_validation_winner": "matrix",
+    "implement_dynamic_stability_now": false,
+    "reason": "Five warm-up epochs produced more stable assignments and slightly stronger margins, but validation macro accuracy fell from 0.915008 to 0.907883, driven mainly by lower ER validation accuracy. Assignment stability therefore does not reliably predict downstream validation quality.",
+    "dynamic_rule_observation": "A 0.90 consecutive-assignment threshold with patience 2 would have frozen at epoch 4 in this run, but epoch 4 has not been evaluated as a complete training strategy and is not guaranteed to outperform epochs 3 or 5.",
+    "recommended_next_step": "Keep three warm-up epochs for the row baseline. Prioritize confidence-gated row sharing so ambiguous rows remain task-specific; retain matrix sharing as the current primary method. Adaptive warm-up can be added later as a methodology ablation, not as the immediate performance fix."
+  }
+}

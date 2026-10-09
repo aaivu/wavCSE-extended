@@ -1,17 +1,16 @@
-# NCMTL v1 configuration for KS, speaker ID, and emotion recognition.
-
+# Adaptive all-row sharing; paired seed-44 experiment.
 log_level: INFO
-seed: 42  # improvements/seed_utils.py -- override here or with --seed for multi-seed runs
+seed: 44
 
 device:
   type: cuda
-  index: 0
+  index: 1
 
 paths:
   root_data_path: ~/voice_dataset
   root_emb_path: ~/dataset/embedding
-  results_root: results_ncmtl
-  checkpoints_root: checkpoints_ncmtl
+  results_root: results_ncmtl_row_adaptive_all_seed44
+  checkpoints_root: checkpoints_ncmtl_row_adaptive_all_seed44
 
 upstream:
   model_type: wavlm_large
@@ -48,7 +47,7 @@ ncmtl:
   row_warmup_max_epochs: 10
   row_warmup_stability_threshold: 0.90
   row_warmup_stability_patience: 2
-
+  row_min_relative_margin: 0.0
   kmeans_random_state: 42
   kmeans_n_init: 10
   kmeans_max_iter: 100

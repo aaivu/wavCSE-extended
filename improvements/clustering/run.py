@@ -81,14 +81,38 @@ def _log_final_mlflow_state(trainer, model):
             if os.path.exists(path):
                 mlflow.log_artifact(path, artifact_path="checkpoints")
 
-        state = model.get_cluster_state()
-        for task, cluster in zip(trainer.task_array, state["assignments"]):
-            mlflow.log_param(f"final_cluster_{task}", cluster)
-        mlflow.log_param("clusters_frozen", state["frozen"])
-        mlflow.log_param(
-            "cluster_frozen_epoch",
-            trainer.frozen_epoch if trainer.frozen_epoch is not None else "not_frozen",
-        )
+        mlflow.log_param("sharing_granularity", trainer.sharing_granularity)
+        if trainer.sharing_granularity == "row":
+            for pair, count in trainer.row_task_sharing.assignment_counts().items():
+                mlflow.log_param(f"row_pair_count_{pair}", count)
+            for pair, count in trainer.row_task_sharing.shared_assignment_counts().items():
+                mlflow.log_param(f"shared_row_pair_count_{pair}", count)
+            mlflow.log_param(
+                "row_min_relative_margin", trainer.row_min_relative_margin
+            )
+            mlflow.log_param("row_sharing_mode", trainer.row_sharing_mode)
+            mlflow.log_param(
+                "row_soft_min_margin", trainer.row_soft_min_margin
+            )
+            mlflow.log_param(
+                "row_soft_full_margin", trainer.row_soft_full_margin
+            )
+            mlflow.log_param(
+                "clusters_frozen", trainer.row_task_sharing.initialized
+            )
+            mlflow.log_param(
+                "cluster_frozen_epoch",
+                trainer.row_task_sharing.assignment_epoch,
+            )
+        else:
+            state = model.get_cluster_state()
+            for task, cluster in zip(trainer.task_array, state["assignments"]):
+                mlflow.log_param(f"final_cluster_{task}", cluster)
+            mlflow.log_param("clusters_frozen", state["frozen"])
+            mlflow.log_param(
+                "cluster_frozen_epoch",
+                trainer.frozen_epoch if trainer.frozen_epoch is not None else "not_frozen",
+            )
         mlflow.log_artifacts(trainer.results_dir, artifact_path="results")
     except Exception as error:
         logging.warning("Could not log final MLflow artifacts: %s", error)
@@ -182,6 +206,7 @@ def main():
             layer_pooling_param=layer_pooling_param,
             dropout_prob_shared1=cfg["model"]["dropout_prob_shared1"],
             dropout_prob_shared2=cfg["model"]["dropout_prob_shared2"],
+            shared_activation=cfg["model"].get("shared_activation", "none"),
             identical_candidate_initialization=cfg["ncmtl"].get(
                 "identical_candidate_initialization", True
             ),

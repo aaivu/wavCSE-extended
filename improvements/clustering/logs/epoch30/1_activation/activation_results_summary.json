@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "experiment": {
+    "name": "NCMTL shared activation screening",
+    "task_type": "ks_si_er",
+    "epochs": 30,
+    "run_count": 3,
+    "parameter": "model.shared_activation",
+    "values": ["none", "gelu", "relu"],
+    "primary_selection_metric": "validation.opt.macro_task_accuracy",
+    "selection_note": "Activation selection is based on the task-balanced validation macro accuracy. Test metrics are descriptive only and were not used to select the winner.",
+    "common_settings": {
+      "pooling": {"type": "auto", "init_alpha": 0.01},
+      "num_clusters": 2,
+      "cluster_regularization_alpha": 0.001,
+      "cluster_every_n_batches": 5,
+      "warmup_epochs": 3,
+      "identical_candidate_initialization": true,
+      "kmeans_n_init": 10,
+      "label_smoothing": 0.1,
+      "batch_size": 2048
+    },
+    "limitations": [
+      "Each activation has only one run, so differences can include model initialization, data-order, dropout, CUDA, and other training randomness.",
+      "The current none, gelu, and relu logs match on the recorded experiment settings, including Auto pooling 0.01, alpha 0.001, warm-up 3, identical candidate initialization, K-Means n_init 10, label smoothing 0.1, no gradient clipping, and 30 epochs.",
+      "GELU ran on cuda:1 while none and ReLU ran on cuda:0; hardware and CUDA nondeterminism can still introduce small differences.",
+      "A robust activation conclusion requires repeating none, gelu, and relu over the same three to five global seeds and comparing means and standard deviations.",
+      "All three runs discovered KS+ER / SI and froze the assignments at epoch 6, so cluster grouping does not explain their performance differences."
+    ]
+  },
+  "rankings": {
+    "validation_opt_macro_task_accuracy": [
+      {"rank": 1, "activation": "none", "value": 0.917552},
+      {"rank": 2, "activation": "gelu", "value": 0.916859},
+      {"rank": 3, "activation": "relu", "value": 0.909012}
+    ],
+    "validation_opt_accuracy_all": [
+      {"rank": 1, "activation": "none", "value": 0.971378},
+      {"rank": 2, "activation": "gelu", "value": 0.965556},
+      {"rank": 3, "activation": "relu", "value": 0.956577}
+    ],
+    "test_opt_macro_task_accuracy_descriptive_only": [
+      {"rank": 1, "activation": "none", "value": 0.913259},
+      {"rank": 2, "activation": "gelu", "value": 0.913160},
+      {"rank": 3, "activation": "relu", "value": 0.906391}
+    ],
+    "test_opt_accuracy_all_descriptive_only": [
+      {"rank": 1, "activation": "none", "value": 0.973464},
+      {"rank": 2, "activation": "gelu", "value": 0.970650},
+      {"rank": 3, "activation": "relu", "value": 0.959205}
+    ]
+  },
+  "recommendation": {
+    "validation_macro_winner": "none",
+    "best_added_activation": "gelu",
+    "recommended_for_current_configuration": "none",
+    "reason": "The current no-activation run achieved the highest task-balanced validation macro accuracy (0.917552) and validation overall accuracy (0.971378). GELU was extremely close on validation macro accuracy (0.916859, only 0.000693 lower), while ReLU was clearly weaker.",
+    "test_observation": "The no-activation run also had the highest descriptive opt-checkpoint test macro accuracy (0.913259) and overall accuracy (0.973464). Its test macro advantage over GELU was only 0.000099, so the two should be treated as effectively tied until multi-seed confirmation.",
+    "confirmation": "Keep none as the current selection, but repeat none and GELU over the same three to five global seeds before claiming that none is reliably better."
+  },
+  "runs": {
+    "none": {
+      "activation": "none",
+      "run_id": "2026_09_21_04_05_26",
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/1_activation/none_run_2026_09_21_04_05_21.log",
+        "result_directory": "improvements/clustering/results_ncmtl_activation_none/2026_09_21_04_05_26"
+      },
+      "validation": {
+        "best": {"epoch": 29, "accuracy_all": 0.971729, "macro_task_accuracy": 0.916694, "tasks": {"ks": 0.983966, "si": 0.974073, "er": 0.792043}},
+        "opt": {"epoch": 30, "accuracy_all": 0.971378, "macro_task_accuracy": 0.917552, "tasks": {"ks": 0.982054, "si": 0.974942, "er": 0.795660}}
+      },
+      "test": {
+        "best": {
+          "accuracy_all": 0.973080,
+          "loss_all": 0.151201,
+          "macro_task_accuracy": 0.903481,
+          "macro_task_loss": 0.417201,
+          "tasks": {
+            "ks": {"accuracy": 0.986394, "loss": 0.150662, "samples": 6835},
+            "si": {"accuracy": 0.977215, "loss": 0.481308, "samples": 8251},
+            "er": {"accuracy": 0.746835, "loss": 0.619632, "samples": 553}
+          }
+        },
+        "opt": {
+          "accuracy_all": 0.973464,
+          "loss_all": 0.153787,
+          "macro_task_accuracy": 0.913259,
+          "macro_task_loss": 0.416099,
+          "tasks": {
+            "ks": {"accuracy": 0.985955, "loss": 0.163612, "samples": 6835},
+            "si": {"accuracy": 0.976245, "loss": 0.487940, "samples": 8251},
+            "er": {"accuracy": 0.777577, "loss": 0.596746, "samples": 553}
+          }
+        },
+        "epoch_30": {
+          "accuracy_all": 0.973464,
+          "loss_all": 0.153787,
+          "macro_task_accuracy": 0.913259,
+          "macro_task_loss": 0.416099,
+          "tasks": {
+            "ks": {"accuracy": 0.985955, "loss": 0.163612, "samples": 6835},
+            "si": {"accuracy": 0.976245, "loss": 0.487940, "samples": 8251},
+            "er": {"accuracy": 0.777577, "loss": 0.596746, "samples": 553}
+          }
+        }
+      },
+      "cluster": {"assignments": {"ks": 0, "si": 1, "er": 0}, "groups": [["ks", "er"], ["si"]], "frozen": true, "frozen_epoch": 6}
+    },
+    "gelu": {
+      "activation": "gelu",
+      "run_id": "2026_09_20_19_50_08",
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/1_activation/gelu_run_2026_09_20_19_49_55.log",
+        "result_directory": "improvements/clustering/results_ncmtl_activation_gelu/2026_09_20_19_50_08"
+      },
+      "validation": {
+        "best": {"epoch": 30, "accuracy_all": 0.965556, "macro_task_accuracy": 0.916859, "tasks": {"ks": 0.979700, "si": 0.964368, "er": 0.806510}},
+        "opt": {"epoch": 30, "accuracy_all": 0.965556, "macro_task_accuracy": 0.916859, "tasks": {"ks": 0.979700, "si": 0.964368, "er": 0.806510}}
+      },
+      "test": {
+        "opt": {
+          "accuracy_all": 0.970650,
+          "loss_all": 0.148334,
+          "macro_task_accuracy": 0.913160,
+          "macro_task_loss": 0.408571,
+          "tasks": {
+            "ks": {"accuracy": 0.985808, "loss": 0.150289, "samples": 6835},
+            "si": {"accuracy": 0.970670, "loss": 0.470858, "samples": 8251},
+            "er": {"accuracy": 0.783002, "loss": 0.604566, "samples": 553}
+          }
+        }
+      },
+      "cluster": {"assignments": {"ks": 0, "si": 1, "er": 0}, "groups": [["ks", "er"], ["si"]], "frozen": true, "frozen_epoch": 6}
+    },
+    "relu": {
+      "activation": "relu",
+      "run_id": "2026_09_20_19_51_15",
+      "sources": {
+        "log": "improvements/clustering/logs/epoch30/1_activation/relu_run_2026_09_20_19_51_10.log",
+        "result_directory": "improvements/clustering/results_ncmtl_activation_relu/2026_09_20_19_51_15"
+      },
+      "validation": {
+        "best": {"epoch": 29, "accuracy_all": 0.957278, "macro_task_accuracy": 0.905614, "tasks": {"ks": 0.978964, "si": 0.949450, "er": 0.788427}},
+        "opt": {"epoch": 25, "accuracy_all": 0.956577, "macro_task_accuracy": 0.909012, "tasks": {"ks": 0.978964, "si": 0.946987, "er": 0.801085}}
+      },
+      "test": {
+        "best": {
+          "accuracy_all": 0.963489,
+          "loss_all": 0.168978,
+          "macro_task_accuracy": 0.908535,
+          "macro_task_loss": 0.444210,
+          "tasks": {
+            "ks": {"accuracy": 0.984053, "loss": 0.198773, "samples": 6835},
+            "si": {"accuracy": 0.958550, "loss": 0.531633, "samples": 8251},
+            "er": {"accuracy": 0.783002, "loss": 0.602225, "samples": 553}
+          }
+        },
+        "opt": {
+          "accuracy_all": 0.959205,
+          "loss_all": 0.172709,
+          "macro_task_accuracy": 0.906391,
+          "macro_task_loss": 0.453930,
+          "tasks": {
+            "ks": {"accuracy": 0.984053, "loss": 0.203449, "samples": 6835},
+            "si": {"accuracy": 0.950309, "loss": 0.543217, "samples": 8251},
+            "er": {"accuracy": 0.784810, "loss": 0.615124, "samples": 553}
+          }
+        }
+      },
+      "cluster": {"assignments": {"ks": 0, "si": 1, "er": 0}, "groups": [["ks", "er"], ["si"]], "frozen": true, "frozen_epoch": 6}
+    }
+  }
+}

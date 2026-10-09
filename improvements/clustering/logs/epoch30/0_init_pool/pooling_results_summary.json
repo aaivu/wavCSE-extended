@@ -55,7 +55,7 @@
       "pooling": {"type": "auto", "parameter": 0.01},
       "run_id": "2026_09_01_04_47_36",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/auto_run_2026_09_01_04_47_30.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/auto_run_2026_09_01_04_47_30.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_04_47_36"
       },
       "validation": {
@@ -78,7 +78,7 @@
       "pooling": {"type": "smp", "parameter": 1.0},
       "run_id": "2026_09_01_03_16_16",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/smp_run_2026_09_01_03_16_11.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/smp_run_2026_09_01_03_16_11.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_03_16_16"
       },
       "validation": {
@@ -101,7 +101,7 @@
       "pooling": {"type": "sap", "parameter": 512},
       "run_id": "2026_09_01_06_29_54",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/sap_run_2026_09_01_06_29_49.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/sap_run_2026_09_01_06_29_49.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_06_29_54"
       },
       "validation": {
@@ -124,7 +124,7 @@
       "pooling": {"type": "max", "parameter": null},
       "run_id": "2026_09_01_10_43_12",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/max_run_2026_09_01_10_43_06.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/max_run_2026_09_01_10_43_06.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_10_43_12"
       },
       "validation": {
@@ -147,7 +147,7 @@
       "pooling": {"type": "mix", "parameter": 0.5},
       "run_id": "2026_09_01_12_22_51",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/mix_05_run_2026_09_01_12_22_45.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/mix_05_run_2026_09_01_12_22_45.log",
         "result_directory": "improvements/clustering/results_ncmtl_mix_05/2026_09_01_12_22_51"
       },
       "validation": {
@@ -170,7 +170,7 @@
       "pooling": {"type": "mean", "parameter": null},
       "run_id": "2026_09_01_09_22_04",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/mean_run_2026_09_01_09_21_58.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/mean_run_2026_09_01_09_21_58.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_09_22_04"
       },
       "validation": {
@@ -193,7 +193,7 @@
       "pooling": {"type": "weighted", "parameter": 25},
       "run_id": "2026_09_01_07_55_40",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/weighted_run_2026_09_01_07_55_30.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/weighted_run_2026_09_01_07_55_30.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_07_55_40"
       },
       "validation": {
@@ -216,7 +216,7 @@
       "pooling": {"type": "gated", "parameter": 25},
       "run_id": "2026_09_01_13_46_02",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/gated_run_2026_09_01_13_45_56.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/gated_run_2026_09_01_13_45_56.log",
         "result_directory": "improvements/clustering/results_ncmtl/2026_09_01_13_46_02"
       },
       "validation": {
@@ -240,7 +240,7 @@
       "pooling": {"type": "lnp", "parameter": 2},
       "run_id": "2026_09_01_12_19_55",
       "sources": {
-        "log": "improvements/clustering/logs/epoch30/lnp_2_run_2026_09_01_12_19_49.log",
+        "log": "improvements/clustering/logs/epoch30/0_init_pool/lnp_2_run_2026_09_01_12_19_49.log",
         "result_directory": "improvements/clustering/results_ncmtl_lnp_p2/2026_09_01_12_19_55"
       },
       "validation": {

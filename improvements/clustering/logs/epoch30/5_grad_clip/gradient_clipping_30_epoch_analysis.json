@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "experiment": "Experiment 5: Gradient-Clipping Stabilization Ablation",
+  "training_epochs": 30,
+  "task_type": "ks_si_er",
+  "primary_selection_metric": "validation.opt.macro_task_accuracy",
+  "metric_policy": {
+    "macro_task_accuracy": "Arithmetic mean of KS, SI, and ER accuracies, weighted equally by task.",
+    "accuracy_all": "Sample-weighted accuracy across all labelled task examples.",
+    "test_usage": "Test results are descriptive outcomes of validation-selected checkpoints and were not used to select the method.",
+    "stability_definition": "Optimization stability and row-assignment stability are reported separately. A finite loss trajectory does not imply that adaptive row assignments met their stability gate."
+  },
+  "configuration": {
+    "seed": 42,
+    "pooling": {"frame": "mean", "layer": "auto", "init_alpha": 0.01},
+    "candidate_dimension": 2000,
+    "identical_candidate_initialization": true,
+    "shared_activation": "none",
+    "cluster_alpha": 0.001,
+    "label_smoothing": 0.1,
+    "batch_size": 2048,
+    "initial_learning_rate": 0.0025,
+    "gradient_clip_norm": 1.0,
+    "gradient_clipping_scope": "Global norm over all model parameters after loss.backward() and before optimizer.step().",
+    "adaptive_warmup": {"minimum_epochs": 3, "maximum_epochs": 10, "stability_threshold": 0.9, "patience": 2},
+    "soft_sharing": {
+      "minimum_margin": 0.05,
+      "full_sharing_margin": 0.2,
+      "formula": "beta = clip((relative_margin - 0.05) / (0.20 - 0.05), 0, 1)"
+    }
+  },
+  "runs": {
+    "all_layers_clip1": {
+      "role": "Primary 30-epoch clipping ablation",
+      "log": "improvements/clustering/logs/epoch30/5_grad_clip/run_2026_10_03_08_08_53.log",
+      "results": "improvements/clustering/results_ncmtl_soft_top_layers_all_seed42_clip1/2026_10_03_08_08_58",
+      "run_id": "2026_10_03_08_08_58",
+      "selected_transformer_layers": "all (0-24)",
+      "freeze": {
+        "epoch": 10,
+        "reason": "maximum adaptive warm-up reached",
+        "stability_gate_reached": false,
+        "final_warmup_stability": 0.776,
+        "stable_transition_count": 0,
+        "pair_counts": {"ks_si": 1600, "ks_er": 398, "si_er": 2},
+        "shared_pair_counts": {"ks_si": 1227, "ks_er": 198, "si_er": 0},
+        "independent_rows": 575,
+        "sharing_coverage": 0.7125,
+        "beta": {"mean": 0.310450, "median": 0.238320, "standard_deviation": 0.314483, "min": 0.0, "max": 1.0}
+      },
+      "post_freeze_assignment_match": {
+        "first": 0.935,
+        "epoch_30": 0.896,
+        "minimum": 0.896,
+        "mean": 0.900925,
+        "interpretation": "Assignments and beta remained frozen; this measures counterfactual nearest-pair agreement with the forced epoch-10 assignments."
+      },
+      "validation": {
+        "opt": {"epoch": 29, "accuracy_all": 0.973062, "macro_task_accuracy": 0.916508, "tasks": {"ks": 0.984996, "si": 0.976101, "er": 0.788427}},
+        "epoch_30_rounded": {"accuracy_all": 0.9707, "loss_all": 0.2122, "macro_task_accuracy": 0.908233, "tasks": {"ks": 0.9826, "si": 0.9754, "er": 0.7667}}
+      },
+      "test": {
+        "opt": {"accuracy_all": 0.974487, "loss_all": 0.145617, "macro_task_accuracy": 0.906628, "tasks": {"ks": 0.986540, "si": 0.979275, "er": 0.754069}},
+        "epoch_30": {"accuracy_all": 0.974487, "loss_all": 0.148322, "macro_task_accuracy": 0.908340, "tasks": {"ks": 0.986979, "si": 0.978548, "er": 0.759494}}
+      },
+      "optimization_stability": {"nan_observed": false, "loss_explosion_observed": false, "status": "stable"}
+    },
+    "layers_0_18_clip1": {
+      "role": "Stress test against the previously unstable unclipped 0-18 run",
+      "log": "improvements/clustering/logs/epoch30/layer_reduction/top_layer_dropping/with_grad_clip/run_2026_10_03_08_02_49.log",
+      "results": "improvements/clustering/results_ncmtl_soft_top_layers_0_18_seed42_clip1/2026_10_03_08_02_55",
+      "run_id": "2026_10_03_08_02_55",
+      "selected_transformer_layers": "0-18",
+      "freeze": {
+        "epoch": 10,
+        "reason": "maximum adaptive warm-up reached",
+        "stability_gate_reached": false,
+        "final_warmup_stability": 0.8575,
+        "stable_transition_count": 0,
+        "pair_counts": {"ks_si": 1743, "ks_er": 253, "si_er": 4},
+        "shared_pair_counts": {"ks_si": 1476, "ks_er": 122, "si_er": 3},
+        "independent_rows": 399,
+        "sharing_coverage": 0.8005,
+        "beta": {"mean": 0.403762, "median": 0.370461, "standard_deviation": 0.331868, "min": 0.0, "max": 1.0}
+      },
+      "post_freeze_assignment_match": {"first": 0.9515, "epoch_30": 0.9335, "minimum": 0.9305, "mean": 0.9338},
+      "validation": {
+        "opt": {"epoch": 29, "accuracy_all": 0.965837, "macro_task_accuracy": 0.900433, "tasks": {"ks": 0.982642, "si": 0.966396, "er": 0.752260}},
+        "epoch_30_rounded": {"accuracy_all": 0.9659, "loss_all": 0.2454, "macro_task_accuracy": 0.883300, "tasks": {"ks": 0.9818, "si": 0.9719, "er": 0.6962}}
+      },
+      "test": {
+        "opt": {"accuracy_all": 0.967070, "loss_all": 0.152516, "macro_task_accuracy": 0.885599, "tasks": {"ks": 0.985955, "si": 0.969216, "er": 0.701627}},
+        "epoch_30": {"accuracy_all": 0.968029, "loss_all": 0.156792, "macro_task_accuracy": 0.885668, "tasks": {"ks": 0.986394, "si": 0.970791, "er": 0.699819}}
+      },
+      "optimization_stability": {
+        "nan_observed": false,
+        "loss_explosion_observed": false,
+        "status": "stable_through_epoch_30",
+        "interpretation": "Clipping prevented the late epoch-22 loss explosion observed in the matched unclipped run."
+      }
+    }
+  },
+  "matched_unclipped_comparisons": {
+    "all_layers": {
+      "baseline_log": "improvements/clustering/logs/epoch30/layer_reduction/top_layer_dropping/run_2026_09_29_11_30_22.log",
+      "baseline_results": "improvements/clustering/results_ncmtl_row_soft_margin_0p05_0p20_seed42/2026_09_29_11_30_27",
+      "baseline_freeze": {"epoch": 4, "reason": "assignment stability reached", "final_warmup_stability": 0.95},
+      "baseline_validation_opt": {"accuracy_all": 0.970747, "macro_task_accuracy": 0.919885, "tasks": {"ks": 0.981171, "si": 0.973783, "er": 0.804702}},
+      "baseline_test_opt": {"accuracy_all": 0.973080, "macro_task_accuracy": 0.917448, "tasks": {"ks": 0.984784, "si": 0.975518, "er": 0.792043}},
+      "clip_minus_unclipped_percentage_points": {
+        "validation_macro": -0.3377,
+        "test_accuracy_all": 0.1407,
+        "test_macro": -1.0820,
+        "test_tasks": {"ks": 0.1756, "si": 0.3757, "er": -3.7974}
+      }
+    },
+    "layers_0_18": {
+      "baseline_log": "improvements/clustering/logs/epoch30/layer_reduction/top_layer_dropping/run_2026_10_02_12_58_08.log",
+      "baseline_results": "improvements/clustering/results_ncmtl_soft_top_layers_0_18_seed42/2026_10_02_12_58_14",
+      "baseline_freeze": {"epoch": 4, "reason": "assignment stability reached", "final_warmup_stability": 0.969},
+      "baseline_validation_opt": {"accuracy_all": 0.961768, "macro_task_accuracy": 0.900397, "tasks": {"ks": 0.981024, "si": 0.958864, "er": 0.761302}},
+      "baseline_test_opt": {"accuracy_all": 0.963169, "macro_task_accuracy": 0.899410, "tasks": {"ks": 0.985369, "si": 0.958793, "er": 0.754069}},
+      "baseline_epoch_30_test": {"accuracy_all": 0.827674, "macro_task_accuracy": 0.800446, "loss_all": 0.819602},
+      "clip_minus_unclipped_percentage_points": {
+        "validation_macro": 0.0036,
+        "test_accuracy_all": 0.3901,
+        "test_macro": -1.3811,
+        "test_tasks": {"ks": 0.0586, "si": 1.0423, "er": -5.2442}
+      }
+    }
+  },
+  "observations": [
+    "Global norm clipping at 1.0 prevented the late catastrophic loss growth in the 0-18 stress test and kept its epoch-30 checkpoint usable.",
+    "Neither clipped run met the 0.90 assignment-stability threshold for two consecutive transitions; both froze only because the ten-epoch maximum warm-up was reached.",
+    "Clipping reversed the dominant all-layer row relationship from KS-ER in the unclipped run to KS-SI in the clipped run, showing that it materially changed task-relationship discovery.",
+    "Sample-weighted test accuracy increased slightly, but test macro accuracy decreased because ER declined substantially.",
+    "The frequency and magnitude of clipping cannot be measured from these runs because the pre-clipping gradient norm was not logged."
+  ],
+  "decision": {
+    "status": "reject_as_default_keep_as_stabilization_ablation",
+    "summary": "Gradient clipping at max_norm=1.0 improves numerical optimization stability but prevents natural adaptive row-assignment convergence under the current ten-epoch warm-up and reduces balanced test performance, especially ER.",
+    "future_layer_reduction_policy": "Continue primary layer-reduction experiments without clipping for comparability. Revisit clipping only if instability repeats, preferably after adding gradient-norm diagnostics or testing a less restrictive threshold."
+  }
+}

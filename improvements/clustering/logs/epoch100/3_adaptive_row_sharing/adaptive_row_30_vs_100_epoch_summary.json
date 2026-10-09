@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "title": "Adaptive row-sharing NCMTL: paired 100-epoch comparison with 30-epoch context",
+  "task_type": "ks_si_er",
+  "metric_definitions": {
+    "accuracy_all": "Sample-weighted accuracy across the three tasks",
+    "macro_task_accuracy": "Arithmetic mean of KS, SI, and ER accuracies; primary validation comparison metric",
+    "best_checkpoint": "Checkpoint selected by highest validation accuracy_all",
+    "opt_checkpoint": "Checkpoint selected by highest validation macro_task_accuracy",
+    "final_checkpoint": "Checkpoint from the last epoch, regardless of validation score",
+    "selection_rule": "Compare methods using validation opt macro_task_accuracy. Test metrics are descriptive results of validation-selected checkpoints, not a method-selection criterion."
+  },
+  "common_settings": {
+    "seed_for_100_epoch_pair": 42,
+    "pooling": "auto, init_alpha=0.01, frame_pooling=mean",
+    "candidate_dimension": 2000,
+    "identical_candidate_initialization": true,
+    "shared_activation": "none",
+    "cluster_alpha": 0.001,
+    "label_smoothing": 0.1,
+    "batch_size": 2048,
+    "initial_learning_rate": 0.0025,
+    "gradient_clip_norm": null,
+    "adaptive_warmup": {
+      "minimum_epochs": 3,
+      "maximum_epochs": 10,
+      "unchanged_row_threshold": 0.9,
+      "consecutive_eligible_transitions": 2
+    }
+  },
+  "runs": [
+    {
+      "method": "adaptive_all_rows",
+      "epochs": 100,
+      "seed": 42,
+      "device": "cuda:0",
+      "minimum_relative_margin": 0.0,
+      "run_id": "2026_09_21_15_03_15",
+      "config": "improvements/clustering/configs/ncmtl_row_adaptive_all_seed42_100ep.yml",
+      "log": "improvements/clustering/logs/epoch100/3_adaptive_row_sharing/run_2026_09_21_15_03_06.log",
+      "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed42_100ep/2026_09_21_15_03_15",
+      "freeze": {
+        "epoch": 4,
+        "sharing_began_epoch": 5,
+        "row_pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356},
+        "shared_row_pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356},
+        "shared_rows": 2000,
+        "independent_rows": 0
+      },
+      "validation": {
+        "best": {"epoch": 85, "accuracy_all": 0.978253, "macro_task_accuracy": 0.929511, "task_accuracy": {"ks": 0.985878, "si": 0.983488, "er": 0.819168}},
+        "opt": {"epoch": 90, "accuracy_all": 0.978183, "macro_task_accuracy": 0.932787, "task_accuracy": {"ks": 0.985290, "si": 0.983053, "er": 0.830018}},
+        "epoch_100": {"accuracy_all_rounded": 0.9778, "loss_all_rounded": 0.1754, "macro_task_accuracy_rounded": 0.9275, "task_accuracy_rounded": {"ks": 0.9853, "si": 0.9835, "er": 0.8137}}
+      },
+      "test": {
+        "best": {"accuracy_all": 0.979986, "loss_all": 0.144316, "macro_task_accuracy": 0.929852, "task_accuracy": {"ks": 0.987710, "si": 0.984487, "er": 0.817360}},
+        "opt": {"accuracy_all": 0.979538, "loss_all": 0.144058, "macro_task_accuracy": 0.925070, "task_accuracy": {"ks": 0.987710, "si": 0.984608, "er": 0.802893}},
+        "epoch_100": {"accuracy_all": 0.980306, "loss_all": 0.144228, "macro_task_accuracy": 0.930617, "task_accuracy": {"ks": 0.987710, "si": 0.984972, "er": 0.819168}}
+      },
+      "training_diagnostics": {"max_train_loss_all_after_epoch_5": 1.1640, "max_val_loss_all_after_epoch_5": 0.2979, "late_loss_spike_observed": false}
+    },
+    {
+      "method": "adaptive_gated_0p10",
+      "epochs": 100,
+      "seed": 42,
+      "device": "cuda:1",
+      "minimum_relative_margin": 0.1,
+      "run_id": "2026_09_21_15_01_16",
+      "config": "improvements/clustering/configs/ncmtl_row_adaptive_gated_0p10_seed42_100ep.yml",
+      "log": "improvements/clustering/logs/epoch100/3_adaptive_row_sharing/run_2026_09_21_15_01_11.log",
+      "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed42_100ep/2026_09_21_15_01_16",
+      "freeze": {
+        "epoch": 4,
+        "sharing_began_epoch": 5,
+        "row_pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356},
+        "shared_row_pair_counts": {"ks_si": 258, "ks_er": 830, "si_er": 156},
+        "shared_rows": 1244,
+        "independent_rows": 756
+      },
+      "validation": {
+        "best": {"epoch": 98, "accuracy_all": 0.979586, "macro_task_accuracy": 0.934861, "task_accuracy": {"ks": 0.985143, "si": 0.985805, "er": 0.833635}},
+        "opt": {"epoch": 98, "accuracy_all": 0.979586, "macro_task_accuracy": 0.934861, "task_accuracy": {"ks": 0.985143, "si": 0.985805, "er": 0.833635}},
+        "epoch_100": {"accuracy_all_rounded": 0.9791, "loss_all_rounded": 0.1778, "macro_task_accuracy_rounded": 0.932833, "task_accuracy_rounded": {"ks": 0.9851, "si": 0.9852, "er": 0.8282}}
+      },
+      "test": {
+        "best": {"accuracy_all": 0.980625, "loss_all": 0.142773, "macro_task_accuracy": 0.930273, "task_accuracy": {"ks": 0.988003, "si": 0.985456, "er": 0.817360}},
+        "opt": {"accuracy_all": 0.980625, "loss_all": 0.142773, "macro_task_accuracy": 0.930273, "task_accuracy": {"ks": 0.988003, "si": 0.985456, "er": 0.817360}},
+        "epoch_100": {"accuracy_all": 0.980753, "loss_all": 0.142959, "macro_task_accuracy": 0.930362, "task_accuracy": {"ks": 0.988149, "si": 0.985578, "er": 0.817360}}
+      },
+      "training_diagnostics": {"max_train_loss_all_after_epoch_5": 1.1642, "max_val_loss_all_after_epoch_5": 0.2968, "late_loss_spike_observed": false}
+    },
+    {
+      "method": "adaptive_all_rows", "epochs": 30, "seed": 42, "minimum_relative_margin": 0.0,
+      "run_id": "2026_09_21_10_14_28", "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/adaptive_all_seed42_run_2026_09_21_10_14_23.log", "results": "improvements/clustering/results_ncmtl/2026_09_21_10_14_28",
+      "freeze": {"epoch": 4, "row_pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_rows": 2000, "independent_rows": 0},
+      "validation": {"opt": {"epoch": 29, "accuracy_all": 0.972711, "macro_task_accuracy": 0.919029, "task_accuracy": {"ks": 0.983230, "si": 0.976390, "er": 0.797468}}},
+      "test": {"opt": {"accuracy_all": 0.975510, "macro_task_accuracy": 0.914594, "task_accuracy": {"ks": 0.986686, "si": 0.979518, "er": 0.777577}}}
+    },
+    {
+      "method": "adaptive_gated_0p10", "epochs": 30, "seed": 42, "minimum_relative_margin": 0.1,
+      "run_id": "2026_09_21_10_42_23", "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/adaptive_gated_0p10_seed42_run_2026_09_21_10_42_18.log", "results": "improvements/clustering/results_ncmtl_row_confidence_0p10/2026_09_21_10_42_23",
+      "freeze": {"epoch": 4, "row_pair_counts": {"ks_si": 533, "ks_er": 1111, "si_er": 356}, "shared_rows": 1244, "independent_rows": 756},
+      "validation": {"opt": {"epoch": 30, "accuracy_all": 0.971168, "macro_task_accuracy": 0.916857, "task_accuracy": {"ks": 0.982936, "si": 0.973783, "er": 0.793852}}},
+      "test": {"opt": {"accuracy_all": 0.973016, "macro_task_accuracy": 0.911860, "task_accuracy": {"ks": 0.986101, "si": 0.975518, "er": 0.773960}}}
+    },
+    {
+      "method": "adaptive_all_rows", "epochs": 30, "seed": 43, "minimum_relative_margin": 0.0,
+      "run_id": "2026_09_21_12_22_05", "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_21_59.log", "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed43/2026_09_21_12_22_05",
+      "freeze": {"epoch": 4, "row_pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_rows": 2000, "independent_rows": 0},
+      "validation": {"opt": {"epoch": 29, "accuracy_all": 0.970116, "macro_task_accuracy": 0.915025, "task_accuracy": {"ks": 0.983230, "si": 0.971611, "er": 0.790235}}},
+      "test": {"opt": {"accuracy_all": 0.973720, "macro_task_accuracy": 0.911188, "task_accuracy": {"ks": 0.986247, "si": 0.976972, "er": 0.770344}}}
+    },
+    {
+      "method": "adaptive_gated_0p10", "epochs": 30, "seed": 43, "minimum_relative_margin": 0.1,
+      "run_id": "2026_09_21_12_31_23", "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_31_18.log", "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed43/2026_09_21_12_31_23",
+      "freeze": {"epoch": 4, "row_pair_counts": {"ks_si": 509, "ks_er": 1242, "si_er": 249}, "shared_rows": 1149, "independent_rows": 851},
+      "validation": {"opt": {"epoch": 13, "accuracy_all": 0.961557, "macro_task_accuracy": 0.900266, "task_accuracy": {"ks": 0.983819, "si": 0.955678, "er": 0.761302}}},
+      "test": {"opt": {"accuracy_all": 0.959972, "macro_task_accuracy": 0.891271, "task_accuracy": {"ks": 0.986540, "si": 0.953097, "er": 0.734177}}},
+      "warning": "Severe finite-loss spike began at epoch 22; opt checkpoint is from before the spike."
+    },
+    {
+      "method": "adaptive_all_rows", "epochs": 30, "seed": 44, "minimum_relative_margin": 0.0,
+      "run_id": "2026_09_21_12_26_49", "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_26_43.log", "results": "improvements/clustering/results_ncmtl_row_adaptive_all_seed44/2026_09_21_12_26_49",
+      "freeze": {"epoch": 4, "row_pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_rows": 2000, "independent_rows": 0},
+      "validation": {"opt": {"epoch": 29, "accuracy_all": 0.971870, "macro_task_accuracy": 0.915132, "task_accuracy": {"ks": 0.984996, "si": 0.973783, "er": 0.786618}}},
+      "test": {"opt": {"accuracy_all": 0.973400, "macro_task_accuracy": 0.913277, "task_accuracy": {"ks": 0.986979, "si": 0.975276, "er": 0.777577}}}
+    },
+    {
+      "method": "adaptive_gated_0p10", "epochs": 30, "seed": 44, "minimum_relative_margin": 0.1,
+      "run_id": "2026_09_21_12_43_29", "log": "improvements/clustering/logs/epoch30/3_adaptive_row_sharing/run_2026_09_21_12_43_23.log", "results": "improvements/clustering/results_ncmtl_row_adaptive_gated_0p10_seed44/2026_09_21_12_43_29",
+      "freeze": {"epoch": 4, "row_pair_counts": {"ks_si": 277, "ks_er": 1193, "si_er": 530}, "shared_rows": 1216, "independent_rows": 784},
+      "validation": {"opt": {"epoch": 13, "accuracy_all": 0.960014, "macro_task_accuracy": 0.905845, "task_accuracy": {"ks": 0.981318, "si": 0.953216, "er": 0.783002}}},
+      "test": {"opt": {"accuracy_all": 0.960292, "macro_task_accuracy": 0.898088, "task_accuracy": {"ks": 0.984199, "si": 0.954187, "er": 0.755877}}},
+      "warning": "Severe finite-loss spike began at epoch 23; opt checkpoint is from before the spike."
+    }
+  ],
+  "comparisons": {
+    "paired_100_epoch_seed42": {
+      "validation_opt_macro": {"all_rows": 0.932787, "gated_0p10": 0.934861, "gated_minus_all": 0.002074},
+      "validation_opt_accuracy_all": {"all_rows": 0.978183, "gated_0p10": 0.979586, "gated_minus_all": 0.001403},
+      "test_opt_macro_descriptive_only": {"all_rows": 0.925070, "gated_0p10": 0.930273, "gated_minus_all": 0.005203},
+      "test_opt_accuracy_all_descriptive_only": {"all_rows": 0.979538, "gated_0p10": 0.980625, "gated_minus_all": 0.001087},
+      "test_opt_er_accuracy_descriptive_only": {"all_rows": 0.802893, "gated_0p10": 0.817360, "gated_minus_all": 0.014467},
+      "result": "At seed 42 and 100 epochs, the 10% gated run has the higher validation-opt macro accuracy; neither run showed a late loss spike."
+    },
+    "paired_30_epoch_seeds_42_43_44": {
+      "validation_opt_macro": {
+        "all_rows_by_seed": [0.919029, 0.915025, 0.915132],
+        "gated_0p10_by_seed": [0.916857, 0.900266, 0.905845],
+        "all_rows_mean": 0.916395,
+        "gated_0p10_mean": 0.907656,
+        "all_minus_gated_mean": 0.008739,
+        "all_rows_wins": 3
+      },
+      "test_opt_macro_descriptive_only": {"all_rows_mean": 0.913020, "gated_0p10_mean": 0.900406},
+      "result": "At 30 epochs, all-row sharing had higher validation-opt macro accuracy for all three seeds; gated seeds 43 and 44 had late loss spikes."
+    },
+    "seed42_30_to_100_epoch_validation_opt_macro": {
+      "all_rows": {"epoch30_run": 0.919029, "epoch100_run": 0.932787, "difference": 0.013758},
+      "gated_0p10": {"epoch30_run": 0.916857, "epoch100_run": 0.934861, "difference": 0.018004},
+      "note": "These are separate 30- and 100-epoch runs; differences are not a guaranteed within-run gain."
+    },
+    "interpretation": [
+      "The seed-42 method ranking reverses between the 30-epoch and 100-epoch experiments: all-row leads at 30, while the 10% gate leads at 100.",
+      "The 100-epoch seed-42 evidence supports a gated win for that paired run, but does not erase the gated failures at 30 epochs for seeds 43 and 44.",
+      "One seed at 100 epochs cannot establish that the gate is more reliable overall; run matched 100-epoch seeds 43 and 44 if a robust final method claim is needed.",
+      "For the 100-epoch all-row run, validation-opt is epoch 90 even though its epoch-100 test score is higher. Do not select the final checkpoint based on test performance."
+    ]
+  },
+  "sources": {
+    "thirty_epoch_full_summary": "improvements/clustering/logs/epoch30/2_row_assignment/comprehensive_epoch30_summary.json",
+    "hundred_epoch_test_metric_files": "Each 100-epoch run's results directory contains eval_metrics_opt.txt, eval_metrics_best.txt, and eval_metrics_epoch.txt.",
+    "hundred_epoch_validation_metric_files": "Each 100-epoch run's train_ks_si_er.txt contains exact best/opt validation task accuracies and rounded per-epoch trajectories."
+  }
+}
